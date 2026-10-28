@@ -1,0 +1,11 @@
+[
+  {
+    "type": "Layout",
+    "id": "R.mods.credit_ledger.views.LedgerView",
+    "path": "coui://gui/gameface/mods/credit_ledger/LedgerView.html",
+    "parameters": {
+      "entrance": "LedgerView",
+      "impl": "gameface"
+    }
+  }
+]
