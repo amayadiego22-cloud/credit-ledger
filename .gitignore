@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Build products and local compiler runtime
+/build/
+/dist/
+/salida/
+/outputs/
+/build_tools/runtime_home/
+/build_tools/selftest with spaces/
+*.exe
+*.dll
+*.wotmod
+*.zip
+*.log
+
+# Player data, credentials and local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+/mods/
+/captures/
+/backups/
+credit-ledger-release.json
+
+# Browser QA generates only local artifacts
+/node_modules/
+/ui/qa/*profile*/
+/ui/qa/*.png
+/ui/qa/qa-report.json
+
+# Editors and operating system
+.vs/
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store

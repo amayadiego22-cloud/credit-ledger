@@ -1,0 +1,12 @@
+{
+  "name": "credit-ledger-ui-qa",
+  "version": "0.22.11",
+  "private": true,
+  "description": "Local browser checks for the Credit Ledger mod interface",
+  "scripts": {
+    "test:ui": "node ui/qa/verify-ui.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
