@@ -1,0 +1,58 @@
+CREDIT LEDGER / CONTABILIDAD DE CRÉDITOS — INSTALADOR 0.22.11
+
+Windows 10 / 11. World of Tanks PC de Wargaming, NA / EU / ASIA.
+Compatible con los clientes 2.4.1.0 y 2.4.1.1.
+
+INSTALAR
+1. Cierra World of Tanks por completo.
+2. Abre CreditLedger-Setup-0.22.11.exe.
+3. Elige tu instalación en la lista y revisa la carpeta que aparece debajo.
+   Si no aparece, pulsa «Elegir carpeta…» y selecciona la carpeta principal
+   de WoT, donde está version.xml. En Game Center puedes encontrarla en
+   Ajustes del juego → Mostrar en carpeta.
+4. Pulsa «Instalar / Actualizar». Cuando aparezca «¡Instalado!», abre el juego.
+   El widget aparece en el garaje.
+
+Si tienes varias instalaciones, repite los pasos para cada una que desees.
+El selector Español / English cambia el idioma del instalador al instante.
+El idioma del mod se elige por separado dentro del juego.
+
+ACTUALIZAR O QUITAR
+El mismo instalador sirve para actualizar a esta versión. Para quitar el mod,
+elige la instalación y pulsa «Quitar el mod…»; confirma la operación.
+Ambas operaciones conservan tus metas, preferencias e historial.
+Solo se cambia la carpeta de mods de la versión activa del juego.
+
+El instalador identifica las copias de Credit Ledger mediante su meta.xml;
+respalda las anteriores y evita dejar duplicados en la carpeta activa.
+Los otros mods y las carpetas de otras versiones del juego se conservan.
+Los respaldos y el mapa de rutas originales quedan en:
+%LOCALAPPDATA%\CreditLedger\Installer\backups\
+Si ya está instalado exactamente el mismo archivo, no vuelve a copiarlo.
+No reemplaza una versión más nueva por esta versión anterior.
+
+REQUISITOS Y LÍMITES
+- Windows 10 / 11 con .NET Framework 4.5 o posterior (incluido normalmente).
+- No admite Blitz, Lesta / Mir Tankov, Common Test ni versiones distintas.
+- Si el cliente se actualiza a otra versión, descarga un mod compatible.
+- Se ejecuta con tus permisos normales. Si la carpeta del juego está
+  protegida, Windows puede requerir que lo abras como administrador.
+- No abre consola, no cierra el juego, no añade servicios ni tareas y no
+  descarga archivos: el mod va incluido y se comprueba con SHA-256.
+- Este ejecutable aún no tiene una firma digital de editor. No cambies
+  la protección de Windows para ejecutarlo; la instalación manual por ZIP
+  sigue siendo una alternativa.
+
+Soporte y ficha oficial: https://wgmods.net/8056/
+Esta edición del instalador no implica que el ejecutable haya sido revisado
+o aprobado por Wargaming; su distribución se revisa por separado.
+
+NOVEDADES
+Círculo verde con porcentaje y cantidad de la meta. «Mover» aparece al pasar el ratón.
+La primera meta de una cuenta nueva es 100.000 créditos. Tus metas guardadas se conservan.
+
+Todo el círculo se resalta al pasar el ratón y se puede pulsar para abrir el resumen.
+Usa el botón «Mover» para cambiarlo de posición.
+
+Edición estable 0.22.11, sin etiqueta beta.
+Descomprime el ZIP y abre CreditLedger-Setup-0.22.11.exe.
