@@ -63,4 +63,4 @@ La demostración utiliza datos ficticios y no se conecta al juego. Consulta [la 
 
 El mod guarda sus datos en la instalación del juego, bajo `mods/configs/credit_ledger`, separados por región y cuenta. Esos archivos no forman parte de este repositorio. No adjuntes tus capturas o registros completos a una incidencia sin revisarlos primero.
 
-Proyecto de **Diego Amaya / amayadiego22-cloud**. World of Tanks y sus recursos pertenecen a sus respectivos titulares.
+Proyecto de **ROLO / amayadiego22-cloud**. World of Tanks y sus recursos pertenecen a sus respectivos titulares.
