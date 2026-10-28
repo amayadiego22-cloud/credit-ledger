@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="utf-8"><title data-l10n="Contabilidad de créditos">Contabilidad de créditos</title><link rel="stylesheet" href="ledger.css"></head>
+<body>
+<div id="credit-ledger-view" class="lc-root">
+ <div id="lc-window" class="lc-window lc-view-widget" role="dialog" aria-modal="false" aria-labelledby="lc-widget-title">
+  <div id="lc-minimized" class="lc-minimized lc-hidden">
+   <div id="lc-minimized-drag-bar" class="lc-minimized-drag-bar"><svg class="lc-progress-ring lc-minimized-ring" width="112" height="112" viewBox="0 0 112 112" aria-hidden="true"><path class="lc-progress-ring-track" d="M 56 8 A 48 48 0 1 1 56 104 A 48 48 0 1 1 56 8"/><path class="lc-progress-ring-value" data-ring-length="301.5929" d="M 56 8 A 48 48 0 1 1 56 104 A 48 48 0 1 1 56 8" stroke-dasharray="301.5929 301.5929" stroke-dashoffset="301.5929"/></svg></div>
+   <button id="lc-minimized-restore" class="lc-minimized-restore" type="button" aria-label="Mostrar contabilidad de créditos" title="Mostrar contabilidad de créditos"><span id="lc-minimized-percent" class="lc-progress-circle-label">—</span><span id="lc-minimized-target" class="lc-minimized-target">—</span><span id="lc-minimized-goal-label" class="lc-minimized-goal-label" data-l10n="Meta">Meta</span></button>
+   <button id="lc-minimized-move" class="lc-minimized-move" type="button" title="Arrastra para mover" data-l10n-title="Arrastra para mover"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v14M1 8h14M5 4l3-3 3 3M5 12l3 3 3-3M4 5L1 8l3 3M12 5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-l10n="Mover">Mover</span></button>
+  </div>
+  <div id="lc-widget" class="lc-widget">
+   <div id="lc-celebration-sparks" class="lc-celebration-sparks lc-hidden" aria-hidden="true"></div>
+   <div id="lc-widget-drag-bar" class="lc-widget-header" title="Arrastra para mover el widget" data-l10n-title="Arrastra para mover el widget"><div id="lc-widget-title" class="lc-widget-title" data-l10n="META DE CRÉDITOS">META DE CRÉDITOS</div><div class="lc-widget-actions"><button id="lc-widget-details" class="lc-widget-details" type="button" data-l10n="Ver detalles">Ver detalles</button><button id="lc-widget-close" class="lc-widget-close lc-circle-control" type="button" aria-label="Minimizar contabilidad de créditos" title="Minimizar"><svg class="lc-progress-ring lc-control-ring" width="40" height="40" viewBox="0 0 80 80" aria-hidden="true"><path class="lc-progress-ring-track" d="M 40 6 A 34 34 0 1 1 40 74 A 34 34 0 1 1 40 6"/><path class="lc-progress-ring-value" d="M 40 6 A 34 34 0 1 1 40 74 A 34 34 0 1 1 40 6" stroke-dasharray="213.6283 213.6283" stroke-dashoffset="213.6283"/></svg><span class="lc-progress-circle-label">—</span></button></div></div>
+   <div class="lc-widget-metrics"><div id="lc-widget-percent" class="lc-widget-percent">—</div><div class="lc-widget-numbers"><div id="lc-widget-progress" class="lc-widget-progress" data-l10n="Esperando tu cuenta">Esperando tu cuenta</div><div id="lc-widget-status" class="lc-widget-status" role="status" data-l10n="El progreso aparecerá cuando se sincronice tu saldo.">El progreso aparecerá cuando se sincronice tu saldo.</div></div></div>
+   <div id="lc-widget-chart" class="lc-widget-chart" title="Arrastra la barra para mover el widget" data-l10n-title="Arrastra la barra para mover el widget"><div id="lc-widget-meter" class="lc-widget-meter" role="progressbar" aria-label="Avance de la meta de créditos" aria-valuemin="0" aria-valuemax="100" data-l10n-aria-label="Avance de la meta de créditos"><div id="lc-widget-fill" class="lc-widget-fill"></div></div><div class="lc-widget-marks"><div class="lc-widget-mark">10 %</div><div class="lc-widget-mark">20 %</div><div class="lc-widget-mark">30 %</div><div class="lc-widget-mark">40 %</div><div class="lc-widget-mark">50 %</div><div class="lc-widget-mark">60 %</div><div class="lc-widget-mark">70 %</div><div class="lc-widget-mark">80 %</div><div class="lc-widget-mark">90 %</div><div class="lc-widget-mark lc-widget-mark-last">100 %</div></div></div>
+   <div class="lc-widget-footer"><div id="lc-widget-period" class="lc-widget-period">Período — · Partidas pendientes</div><div id="lc-widget-balance" class="lc-widget-balance" data-l10n="Saldo pendiente">Saldo pendiente</div></div>
+  </div>
+  <div id="lc-details" class="lc-details lc-hidden">
+  <div id="lc-drag-bar" class="lc-header" title="Arrastra el título para mover la ventana" data-l10n-title="Arrastra el título para mover la ventana"><div class="lc-brand-mark" aria-hidden="true">CR</div><div class="lc-heading"><div class="lc-eyebrow" data-l10n="CONTABILIDAD DE CRÉDITOS · ARRASTRA PARA MOVER">CONTABILIDAD DE CRÉDITOS · ARRASTRA PARA MOVER</div><h1 id="lc-title" class="lc-title" data-l10n="Economía de tu cuenta">Economía de tu cuenta</h1></div><div class="lc-header-actions"><div id="lc-language-controls" class="lc-language-controls" role="group" aria-label="Idioma" data-l10n-aria-label="Idioma"><div id="lc-language-label" class="lc-language-label" data-l10n="Idioma">Idioma</div><div class="lc-language-buttons"><button id="lc-language-es" class="lc-language lc-language-active" type="button" lang="es" aria-pressed="true">Español</button><button id="lc-language-en" class="lc-language" type="button" lang="en" aria-pressed="false">English</button></div></div><button id="lc-back-widget" class="lc-back-widget" type="button" data-l10n="Volver al widget">Volver al widget</button><button id="lc-close" class="lc-close lc-circle-control" type="button" aria-label="Minimizar contabilidad de créditos" title="Minimizar"><svg class="lc-progress-ring lc-control-ring" width="40" height="40" viewBox="0 0 80 80" aria-hidden="true"><path class="lc-progress-ring-track" d="M 40 6 A 34 34 0 1 1 40 74 A 34 34 0 1 1 40 6"/><path class="lc-progress-ring-value" d="M 40 6 A 34 34 0 1 1 40 74 A 34 34 0 1 1 40 6" stroke-dasharray="213.6283 213.6283" stroke-dashoffset="213.6283"/></svg><span class="lc-progress-circle-label">—</span></button></div></div>
+  <div class="lc-body lc-scroll-frame">
+   <div id="lc-content" class="lc-content lc-scroll-viewport">
+    <div class="lc-status-row"><div id="lc-message" class="lc-status" role="status" data-l10n="Esperando los datos de tu cuenta...">Esperando los datos de tu cuenta...</div><button id="lc-refresh" class="lc-link-button" type="button" data-l10n="Actualizar">Actualizar</button></div>
+    <div class="lc-language-feedback"><div id="lc-language-status" class="lc-foot lc-hidden" role="status"></div><button id="lc-language-retry" class="lc-language-retry lc-hidden" type="button" data-l10n="Reintentar">Reintentar</button></div>
+    <div id="lc-backend-error" class="lc-banner lc-hidden" role="alert"></div>
+    <div class="lc-summary">
+     <div class="lc-stat lc-stat-first"><div id="lc-net-label" class="lc-label" data-l10n="Ganancia o pérdida total">Ganancia o pérdida total</div><div id="lc-net-total" class="lc-value">—</div><div id="lc-battle-count" class="lc-stat-context" data-l10n="Partidas registradas">Partidas registradas</div><div class="lc-stat-note" data-l10n="Después de descontar los gastos">Después de descontar los gastos</div></div>
+     <div class="lc-stat"><div class="lc-label" data-l10n="Saldo al iniciar la meta">Saldo al iniciar la meta</div><div id="lc-goal-base" class="lc-value">—</div><div id="lc-goal-base-status" class="lc-stat-context" data-l10n="Sin meta iniciada">Sin meta iniciada</div><div class="lc-stat-note" data-l10n="Saldo guardado al comenzar">Saldo guardado al comenzar</div></div>
+     <div class="lc-stat"><div class="lc-label" data-l10n="Saldo actual de créditos">Saldo actual de créditos</div><div id="lc-balance" class="lc-value">—</div></div>
+     <div class="lc-stat lc-stat-remaining"><div class="lc-label" data-l10n="Créditos que faltan">Créditos que faltan</div><div id="lc-goal-remaining" class="lc-value">—</div><div id="lc-goal-remaining-status" class="lc-stat-context" data-l10n="Sin meta activa">Sin meta activa</div><div class="lc-stat-note" data-l10n="Se actualiza automáticamente">Se actualiza automáticamente</div></div>
+    </div>
+    <div class="lc-goal lc-panel">
+     <div id="lc-goal-title" class="lc-section-title lc-goal-title" data-l10n="Tu meta empieza desde el saldo actual">Tu meta empieza desde el saldo actual</div>
+     <div id="lc-target-label" class="lc-label lc-field-label" data-l10n="Créditos adicionales que quiero ganar">Créditos adicionales que quiero ganar</div>
+     <div class="lc-target-field"><input id="lc-target" class="lc-target" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-labelledby="lc-target-label" value="0" placeholder="0" maxlength="24" disabled><div class="lc-stepper"><button id="lc-target-up" class="lc-step lc-step-up" type="button" title="Sumar 100.000 créditos" aria-label="Sumar 100.000 créditos" data-l10n-title="Sumar 100.000 créditos" data-l10n-aria-label="Sumar 100.000 créditos"><div class="lc-arrow-up"></div></button><button id="lc-target-down" class="lc-step" type="button" title="Restar 100.000 créditos" aria-label="Restar 100.000 créditos" data-l10n-title="Restar 100.000 créditos" data-l10n-aria-label="Restar 100.000 créditos"><div class="lc-arrow-down"></div></button></div></div>
+     <div class="lc-foot lc-step-hint" data-l10n="Las flechas ajustan 100.000 créditos. Escribe 0 para usar la contabilidad sin meta.">Las flechas ajustan 100.000 créditos. Escribe 0 para usar la contabilidad sin meta.</div>
+     <div class="lc-goal-actions"><div id="lc-draft-status" class="lc-foot lc-draft-status" data-l10n="Inicia tu meta desde el saldo actual, en 0 %.">Inicia tu meta desde el saldo actual, en 0 %.</div><button id="lc-save-goal" class="lc-save lc-disabled" type="button" disabled data-l10n="Iniciar meta">Iniciar meta</button></div>
+     <div class="lc-goal-reset-row"><button id="lc-reset-goal" class="lc-goal-reset lc-disabled" type="button" disabled data-l10n="Reiniciar meta">Reiniciar meta</button><div class="lc-foot lc-goal-reset-help" data-l10n="Empieza desde tu saldo actual, en 0 %. Conserva el historial.">Empieza desde tu saldo actual, en 0 %. Conserva el historial.</div></div>
+     <div id="lc-input-error" class="lc-input-error lc-hidden" role="alert"></div>
+     <div id="lc-goal-progress" class="lc-goal-progress">
+      <div id="lc-goal-celebration-sparks" class="lc-celebration-sparks lc-hidden" aria-hidden="true"></div>
+      <div class="lc-progress-line"><div id="lc-progress-text" class="lc-progress-text" data-l10n="Sin meta disponible">Sin meta disponible</div><div id="lc-percent" class="lc-percent">—</div></div>
+      <div id="lc-meter" class="lc-meter" role="progressbar" aria-label="Avance desde el saldo base" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-l10n-aria-label="Avance desde el saldo base"><div id="lc-fill" class="lc-fill"></div></div>
+      <div class="lc-detail-marks" aria-hidden="true"><div class="lc-widget-mark">10 %</div><div class="lc-widget-mark">20 %</div><div class="lc-widget-mark">30 %</div><div class="lc-widget-mark">40 %</div><div class="lc-widget-mark">50 %</div><div class="lc-widget-mark">60 %</div><div class="lc-widget-mark">70 %</div><div class="lc-widget-mark">80 %</div><div class="lc-widget-mark">90 %</div><div class="lc-widget-mark lc-widget-mark-last">100 %</div></div>
+      <div id="lc-remaining" class="lc-foot" role="status"></div><div id="lc-estimate" class="lc-foot"></div><div id="lc-base-note" class="lc-foot lc-base-note"></div><div id="lc-goal-since" class="lc-foot"></div><div id="lc-goal-accumulated" class="lc-foot lc-base-note lc-hidden"></div>
+     </div>
+    </div>
+    <div class="lc-panel lc-battle-panel">
+    <div class="lc-detail-header"><div class="lc-section-title" data-l10n="Desglose de batallas · créditos">Desglose de batallas · créditos</div>
+     <div class="lc-mode-picker">
+      <div class="lc-label lc-field-label" data-l10n="Filtrar por modo de juego">Filtrar por modo de juego</div>
+      <button id="lc-mode-toggle" class="lc-history-toggle lc-mode-toggle" type="button" aria-expanded="false"><div id="lc-mode-icon" class="lc-mode-art" aria-hidden="true"></div><div id="lc-mode-label" class="lc-history-label lc-filter-label" data-l10n="Todos los modos">Todos los modos</div><div class="lc-chevron">v</div></button>
+      <div id="lc-mode-menu" class="lc-mode-menu lc-hidden lc-scroll-frame">
+       <div id="lc-mode-options" class="lc-mode-options lc-scroll-viewport" tabindex="0"><div id="lc-mode-list" class="lc-history-list"></div></div>
+       <div id="lc-mode-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar modos de juego" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar modos de juego"><div id="lc-mode-thumb" class="lc-scroll-thumb"></div></div>
+      </div>
+      <div class="lc-foot lc-mode-help" data-l10n="El filtro se aplica a las partidas y su resultado. El saldo y la meta corresponden a toda tu cuenta.">El filtro se aplica a las partidas y su resultado. El saldo y la meta corresponden a toda tu cuenta.</div>
+     </div>
+     <div class="lc-vehicle-picker">
+      <div class="lc-label lc-field-label" data-l10n="Filtrar por vehículo">Filtrar por vehículo</div>
+      <button id="lc-vehicle-toggle" class="lc-history-toggle lc-vehicle-toggle" type="button" aria-expanded="false"><div id="lc-vehicle-icon" class="lc-filter-tank-icon" aria-hidden="true"></div><div id="lc-vehicle-label" class="lc-history-label lc-filter-label" data-l10n="Todos los vehículos">Todos los vehículos</div><div class="lc-chevron">v</div></button>
+      <div id="lc-vehicle-menu" class="lc-mode-menu lc-hidden lc-scroll-frame">
+       <div id="lc-vehicle-options" class="lc-mode-options lc-scroll-viewport" tabindex="0"><div id="lc-vehicle-list" class="lc-history-list"></div></div>
+       <div id="lc-vehicle-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar vehículos" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar vehículos"><div id="lc-vehicle-thumb" class="lc-scroll-thumb"></div></div>
+      </div>
+      <div class="lc-vehicle-status-row"><div id="lc-vehicle-status" class="lc-foot lc-mode-help" role="status"></div><button id="lc-vehicle-retry" class="lc-vehicle-retry lc-hidden" type="button" data-l10n="Reintentar">Reintentar</button></div>
+     </div>
+     <div class="lc-history-picker">
+      <button id="lc-history-toggle" class="lc-history-toggle" type="button" aria-expanded="false"><div id="lc-history-label" class="lc-history-label" data-l10n="Todas las partidas">Todas las partidas</div><div class="lc-chevron">v</div></button>
+      <div id="lc-history-menu" class="lc-history-menu lc-hidden lc-scroll-frame">
+       <div id="lc-history-options" class="lc-history-options lc-scroll-viewport" tabindex="0"><div id="lc-history-list" class="lc-history-list"></div></div>
+       <div id="lc-history-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar historial" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar historial"><div id="lc-history-thumb" class="lc-scroll-thumb"></div></div>
+      </div>
+     </div>
+    </div>
+    <div id="lc-detail-vehicles" class="lc-detail-vehicles lc-hidden"></div>
+    <div id="lc-detail-mode" class="lc-detail-mode lc-hidden" data-l10n="Modo de juego: Modo no identificado">Modo de juego: Modo no identificado</div>
+    <div class="lc-costs">
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Ingresos brutos">Ingresos brutos</div><div id="lc-gross" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Reserva personal">Reserva personal</div><div id="lc-reserve-personal" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Reserva del clan">Reserva del clan</div><div id="lc-reserve-clan" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Reparaciones">Reparaciones</div><div id="lc-repair" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Munición">Munición</div><div id="lc-ammo" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Consumibles y directivas">Consumibles y directivas</div><div id="lc-consumables" class="lc-cost-value">—</div></div>
+     <div id="lc-other-row" class="lc-cost-row lc-hidden"><div class="lc-cost-name" data-l10n="Otros gastos de batalla">Otros gastos de batalla</div><div id="lc-other" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row lc-cost-net"><div class="lc-cost-name" data-l10n="Ganancia o pérdida después de gastos">Ganancia o pérdida después de gastos</div><div id="lc-detail-net" class="lc-cost-value">—</div></div>
+    </div>
+    <div id="lc-reserve-note" class="lc-foot lc-reserve-note" data-l10n="Sin desglose de reservas disponible.">Sin desglose de reservas disponible.</div>
+    <div id="lc-detail-rewards" class="lc-detail-rewards"></div>
+    <div id="lc-history-empty" class="lc-empty lc-hidden" data-l10n="Las partidas finalizadas aparecerán aquí.">Las partidas finalizadas aparecerán aquí.</div>
+    </div>
+    <div class="lc-panel lc-wallet-panel">
+    <div class="lc-section-title lc-section-gap" data-l10n="Conciliación con tu saldo de cuenta">Conciliación con tu saldo de cuenta</div>
+    <div id="lc-wallet-period" class="lc-foot" data-l10n="Esperando un saldo sincronizado...">Esperando un saldo sincronizado...</div>
+    <div class="lc-wallet">
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Saldo al iniciar el seguimiento">Saldo al iniciar el seguimiento</div><div id="lc-wallet-base" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Neto de batallas posteriores">Neto de batallas posteriores</div><div id="lc-wallet-battles" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Recompensas y abonos adicionales">Recompensas y abonos adicionales</div><div id="lc-wallet-external" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Otros movimientos / por identificar">Otros movimientos / por identificar</div><div id="lc-wallet-other" class="lc-cost-value">—</div></div>
+     <div class="lc-cost-row lc-cost-net"><div class="lc-cost-name" data-l10n="Saldo actual conciliado">Saldo actual conciliado</div><div id="lc-wallet-total" class="lc-cost-value">—</div></div>
+    </div>
+    <div class="lc-foot" data-l10n="La meta sigue el saldo real: incluye misiones, recompensas, compras y ventas.">La meta sigue el saldo real: incluye misiones, recompensas, compras y ventas.</div>
+    </div>
+    <div class="lc-panel lc-rewards-panel">
+    <div class="lc-section-title lc-section-gap" data-l10n="Misiones y recompensas identificadas">Misiones y recompensas identificadas</div>
+    <div class="lc-foot" data-l10n="Los importes marcados «Incluido en partida» ya forman parte de sus ingresos.">Los importes marcados «Incluido en partida» ya forman parte de sus ingresos.</div>
+    <div class="lc-rewards-box lc-scroll-frame">
+     <div id="lc-rewards-viewport" class="lc-rewards-viewport lc-scroll-viewport"><div id="lc-rewards-list" class="lc-rewards-list"></div></div>
+     <div id="lc-rewards-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar recompensas" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar recompensas"><div id="lc-rewards-thumb" class="lc-scroll-thumb"></div></div>
+    </div>
+    </div>
+    <div id="lc-history-control" class="lc-history-control lc-panel" role="group" aria-labelledby="lc-history-control-title">
+     <div id="lc-history-control-title" class="lc-section-title lc-history-control-title" data-l10n="Reiniciar el período actual">Reiniciar el período actual</div>
+     <div class="lc-foot" data-l10n="Deja las partidas, ganancias y gastos en 0 y desactiva la meta. Tu saldo de cuenta y los días anteriores se conservan.">Deja las partidas, ganancias y gastos en 0 y desactiva la meta. Tu saldo de cuenta y los días anteriores se conservan.</div>
+     <div id="lc-history-settings-status" class="lc-foot lc-history-settings-status" role="status"></div>
+     <div class="lc-history-control-actions"><button id="lc-history-reset" class="lc-history-reset" type="button" data-l10n="Reiniciar historial">Reiniciar historial</button></div>
+     <div id="lc-history-confirmation" class="lc-history-confirmation lc-hidden" role="group" aria-labelledby="lc-history-confirm-title"><div id="lc-history-confirm-title" class="lc-section-title" data-l10n="Empezar de nuevo">Empezar de nuevo</div><div id="lc-history-confirm-note" class="lc-foot" data-l10n="El historial actual queda en 0 y la meta se desactiva. Tu saldo y los días anteriores se conservan.">El historial actual queda en 0 y la meta se desactiva. Tu saldo y los días anteriores se conservan.</div><div class="lc-history-confirm-actions"><button id="lc-history-confirm" class="lc-history-reset" type="button" data-l10n="Confirmar reinicio">Confirmar reinicio</button><button id="lc-history-cancel" class="lc-history-cancel" type="button" data-l10n="Cancelar">Cancelar</button></div></div>
+    </div>
+    <div id="lc-archive" class="lc-panel lc-archive">
+     <button id="lc-archive-toggle" class="lc-archive-toggle" type="button" aria-expanded="false" aria-controls="lc-archive-panel" aria-label="Mostrar historial por día" title="Mostrar historial por día"><div class="lc-archive-heading-label" data-l10n="Historial por día">Historial por día</div><div id="lc-archive-chevron" class="lc-archive-expand" aria-hidden="true">+</div></button>
+     <div id="lc-archive-panel" class="lc-archive-panel lc-hidden">
+      <div class="lc-foot lc-archive-help" data-l10n="Consulta jornadas anteriores por modo o vehículo. Esta vista no cambia tu período actual ni tu meta.">Consulta jornadas anteriores por modo o vehículo. Esta vista no cambia tu período actual ni tu meta.</div>
+      <div id="lc-archive-status" class="lc-foot lc-archive-status" role="status"></div>
+      <div id="lc-archive-filters" class="lc-archive-filters">
+      <div class="lc-archive-field"><div class="lc-label lc-field-label" data-l10n="Jornada">Jornada</div><button id="lc-archive-day-toggle" class="lc-history-toggle" type="button" aria-expanded="false"><div id="lc-archive-day-icon" class="lc-filter-tank-icon" aria-hidden="true"></div><div id="lc-archive-day-label" class="lc-history-label lc-filter-label" data-l10n="Seleccionar día">Seleccionar día</div><div class="lc-chevron">v</div></button><div id="lc-archive-day-menu" class="lc-mode-menu lc-hidden lc-scroll-frame"><div id="lc-archive-day-options" class="lc-mode-options lc-scroll-viewport" tabindex="0"><div id="lc-archive-day-list" class="lc-history-list"></div></div><div id="lc-archive-day-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar jornada" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar jornada"><div id="lc-archive-day-thumb" class="lc-scroll-thumb"></div></div></div></div>
+      <div class="lc-archive-field"><div class="lc-label lc-field-label" data-l10n="Modo de juego">Modo de juego</div><button id="lc-archive-mode-toggle" class="lc-history-toggle" type="button" aria-expanded="false"><div id="lc-archive-mode-icon" class="lc-filter-tank-icon" aria-hidden="true"></div><div id="lc-archive-mode-label" class="lc-history-label lc-filter-label" data-l10n="Todos los modos">Todos los modos</div><div class="lc-chevron">v</div></button><div id="lc-archive-mode-menu" class="lc-mode-menu lc-hidden lc-scroll-frame"><div id="lc-archive-mode-options" class="lc-mode-options lc-scroll-viewport" tabindex="0"><div id="lc-archive-mode-list" class="lc-history-list"></div></div><div id="lc-archive-mode-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar modo de juego" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar modo de juego"><div id="lc-archive-mode-thumb" class="lc-scroll-thumb"></div></div></div></div>
+      <div class="lc-archive-field"><div class="lc-label lc-field-label" data-l10n="Vehículo">Vehículo</div><button id="lc-archive-vehicle-toggle" class="lc-history-toggle" type="button" aria-expanded="false"><div id="lc-archive-vehicle-icon" class="lc-filter-tank-icon" aria-hidden="true"></div><div id="lc-archive-vehicle-label" class="lc-history-label lc-filter-label" data-l10n="Todos los vehículos">Todos los vehículos</div><div class="lc-chevron">v</div></button><div id="lc-archive-vehicle-menu" class="lc-mode-menu lc-hidden lc-scroll-frame"><div id="lc-archive-vehicle-options" class="lc-mode-options lc-scroll-viewport" tabindex="0"><div id="lc-archive-vehicle-list" class="lc-history-list"></div></div><div id="lc-archive-vehicle-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar vehículo" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar vehículo"><div id="lc-archive-vehicle-thumb" class="lc-scroll-thumb"></div></div></div></div>
+      </div>
+      <div class="lc-archive-heading"><div id="lc-archive-count" class="lc-foot">Sin partidas seleccionadas</div><button id="lc-archive-retry" class="lc-vehicle-retry lc-hidden" type="button" data-l10n="Reintentar">Reintentar</button></div>
+      <div id="lc-archive-battles" class="lc-archive-battles lc-scroll-frame"><div id="lc-archive-battle-options" class="lc-history-options lc-scroll-viewport" tabindex="0"><div id="lc-archive-battle-list" class="lc-history-list"></div></div><div id="lc-archive-battle-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar partidas anteriores" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar partidas anteriores"><div id="lc-archive-battle-thumb" class="lc-scroll-thumb"></div></div></div>
+      <div id="lc-archive-detail-title" class="lc-foot lc-archive-detail-title" data-l10n="Todas las partidas del día">Todas las partidas del día</div>
+      <div class="lc-costs">
+       <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Ingresos brutos">Ingresos brutos</div><div id="lc-archive-gross" class="lc-cost-value">—</div></div>
+       <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Reserva personal">Reserva personal</div><div id="lc-archive-personal" class="lc-cost-value">—</div></div>
+       <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Reserva del clan">Reserva del clan</div><div id="lc-archive-clan" class="lc-cost-value">—</div></div>
+       <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Reparaciones">Reparaciones</div><div id="lc-archive-repair" class="lc-cost-value">—</div></div>
+       <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Munición">Munición</div><div id="lc-archive-ammo" class="lc-cost-value">—</div></div>
+       <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Consumibles y directivas">Consumibles y directivas</div><div id="lc-archive-consumables" class="lc-cost-value">—</div></div>
+       <div class="lc-cost-row"><div class="lc-cost-name" data-l10n="Otros gastos de batalla">Otros gastos de batalla</div><div id="lc-archive-other" class="lc-cost-value">—</div></div>
+       <div class="lc-cost-row lc-cost-net"><div class="lc-cost-name" data-l10n="Ganancia o pérdida después de gastos">Ganancia o pérdida después de gastos</div><div id="lc-archive-net" class="lc-cost-value">—</div></div>
+      </div>
+      <div id="lc-archive-reserve-note" class="lc-foot lc-reserve-note"></div>
+      <div id="lc-archive-extra" class="lc-foot lc-archive-help"></div>
+     </div>
+    </div>
+    <div class="lc-footer-note" data-l10n="Datos guardados en este equipo para tu cuenta. Los movimientos anteriores al seguimiento permanecen en el saldo base.">Datos guardados en este equipo para tu cuenta. Los movimientos anteriores al seguimiento permanecen en el saldo base.</div>
+   </div>
+   <div id="lc-content-track" class="lc-scroll-track" role="scrollbar" aria-label="Desplazar panel" aria-orientation="vertical" tabindex="0" data-l10n-aria-label="Desplazar panel"><div id="lc-content-thumb" class="lc-scroll-thumb"></div></div>
+  </div>
+  <div class="lc-bottom"><div data-l10n="CONTABILIDAD DE CRÉDITOS">CONTABILIDAD DE CRÉDITOS</div><div data-l10n="Esc para volver al widget">Esc para volver al widget</div></div>
+  </div>
+ </div>
+</div>
+<script src="ledger.js"></script>
+</body></html>

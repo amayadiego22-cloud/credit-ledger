@@ -1,0 +1,371 @@
+/* Layout scale: 8 / 16 / 24 / 32px; ES5/Gameface-compatible explicit geometry. */
+/* Explicit dimensions avoid the old Gameface flex auto-basis behavior. */
+html, body { width:624px; height:208px; margin:0; overflow:hidden; background:transparent; }
+#credit-ledger-view { width:624px; height:208px; display:flex; flex-direction:row; align-items:center; justify-content:center; color:#e9e5d9; font-family:Arial,sans-serif; font-size:16px; line-height:1.4; pointer-events:none; }
+#credit-ledger-view * { box-sizing:border-box; }
+#credit-ledger-view .lc-window { display:flex; flex-direction:column; flex-shrink:0; width:624px; height:208px; max-width:100%; max-height:100%; background:rgba(13,16,18,0.84); border:1px solid rgba(169,158,119,0.42); border-radius:8px; box-shadow:0 8px 28px rgba(0,0,0,0.36); overflow:hidden; pointer-events:auto; }
+#credit-ledger-view .lc-view-details { background:rgba(13,17,20,0.96); border-color:rgba(189,168,107,0.32); border-radius:8px; }
+#credit-ledger-view .lc-view-minimized { border:0; background:transparent; border-radius:0; box-shadow:none; pointer-events:none; }
+#credit-ledger-view .lc-minimized { position:relative; display:flex; width:184px; height:144px; pointer-events:none; }
+#credit-ledger-view .lc-minimized-drag-bar { position:absolute; left:8px; top:24px; width:112px; height:112px; border-radius:56px; background:rgba(13,17,20,0.94); user-select:none; pointer-events:none; }
+#credit-ledger-view .lc-minimized-restore { position:absolute; display:flex; flex-direction:column; align-items:center; justify-content:center; left:8px; top:24px; width:112px; height:112px; padding:0; margin:0; border-radius:56px; color:#ede9dc; background:transparent; border:0; line-height:24px; pointer-events:auto; }
+#credit-ledger-view .lc-minimized-restore .lc-progress-circle-label { width:88px; height:28px; font-size:23px; line-height:28px; }
+#credit-ledger-view .lc-minimized-target { display:block; width:88px; height:20px; font-size:14px; line-height:20px; text-align:center; white-space:nowrap; pointer-events:none; }
+#credit-ledger-view .lc-minimized-target-long { font-size:12px; }
+#credit-ledger-view .lc-minimized-goal-label { display:block; width:88px; height:16px; font-size:11px; line-height:16px; text-align:center; color:#aab4ad; pointer-events:none; }
+#credit-ledger-view .lc-minimized-move { position:absolute; display:flex; align-items:center; justify-content:center; left:104px; top:8px; width:72px; height:32px; padding:0; margin:0; border:1px solid rgba(217,187,114,0.65); border-radius:8px; font-size:11px; color:#d9bb72; background:rgba(17,23,26,0.96); cursor:move; opacity:0; pointer-events:none; }
+#credit-ledger-view .lc-minimized-move svg { width:16px; height:16px; margin-right:4px; pointer-events:none; }
+#credit-ledger-view .lc-minimized-move span { pointer-events:none; }
+#credit-ledger-view .lc-circle-hover .lc-minimized-move, #credit-ledger-view .lc-circle-dragging .lc-minimized-move, #credit-ledger-view .lc-circle-keyboard .lc-minimized-move { opacity:1; pointer-events:auto; }
+#credit-ledger-view .lc-minimized-move:focus { box-shadow:inset 0 0 0 1px #d9bb72; }
+#credit-ledger-view .lc-circle-hover .lc-minimized-drag-bar, #credit-ledger-view .lc-circle-dragging .lc-minimized-drag-bar, #credit-ledger-view .lc-circle-keyboard .lc-minimized-drag-bar { background:rgba(34,48,39,0.98); box-shadow:inset 0 0 0 1px #d9bb72; }
+#credit-ledger-view .lc-details { display:flex; flex-direction:column; width:100%; height:100%; }
+#credit-ledger-view .lc-header { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; height:96px; flex-shrink:0; padding:16px 24px; border-bottom:1px solid rgba(189,168,107,0.18); background:rgba(20,26,29,0.96); cursor:move; user-select:none; }
+#credit-ledger-view .lc-brand-mark { display:flex; align-items:center; justify-content:center; width:48px; height:48px; flex-shrink:0; margin-right:16px; border:1px solid rgba(201,171,98,0.5); border-radius:24px; color:#dec384; background:rgba(201,171,98,0.07); font-size:13px; letter-spacing:1px; }
+#credit-ledger-view .lc-heading { display:flex; flex-direction:column; width:60%; flex-grow:1; flex-shrink:1; }
+#credit-ledger-view .lc-header-actions { display:flex; flex-direction:row; align-items:center; flex-shrink:0; }
+#credit-ledger-view .lc-language-controls { display:flex; flex-direction:column; align-items:flex-start; width:168px; margin-right:16px; flex-shrink:0; cursor:default; }
+#credit-ledger-view .lc-language-label { margin-bottom:3px; color:#9ea8a4; font-size:10px; line-height:12px; letter-spacing:0.5px; }
+#credit-ledger-view .lc-language-buttons { display:flex; flex-direction:row; width:168px; height:32px; }
+#credit-ledger-view .lc-language { width:80px; height:32px; padding:0 8px; font-size:11px; background:transparent; color:#aeb9b4; border-color:rgba(174,184,178,0.24); }
+#credit-ledger-view .lc-language + .lc-language { margin-left:8px; }
+#credit-ledger-view .lc-language-active { color:#ead18b; border-color:rgba(201,171,98,0.65); background:rgba(201,171,98,0.12); }
+#credit-ledger-view .lc-language-feedback { display:flex; flex-direction:row; align-items:center; width:100%; height:30px; flex-shrink:0; }
+#credit-ledger-view .lc-scroll-viewport { overflow-anchor:none; }
+#credit-ledger-view .lc-language-feedback .lc-foot { width:0; flex-grow:1; flex-shrink:1; margin:0; }
+#credit-ledger-view .lc-language-retry { width:82px; height:28px; margin:3px 0 8px 16px; font-size:11px; background:transparent; }
+#credit-ledger-view .lc-back-widget { width:144px; height:40px; margin-right:8px; background:transparent; border-color:rgba(174,184,178,0.25); color:#c7ceca; }
+#credit-ledger-view .lc-eyebrow { color:#b8a675; font-size:10px; letter-spacing:1.3px; }
+#credit-ledger-view .lc-title { padding:0; margin:8px 0 0; color:#f0ede2; font-size:24px; line-height:1.2; font-weight:normal; }
+#credit-ledger-view button { display:flex; flex-direction:row; align-items:center; justify-content:center; flex-shrink:0; font-family:Arial,sans-serif; font-size:13px; color:#e9e5d9; cursor:pointer; border:1px solid rgba(174,184,178,0.25); border-radius:4px; background:#20292b; outline:none; }
+#credit-ledger-view button:hover { background:#2a3537; border-color:rgba(201,171,98,0.6); }
+#credit-ledger-view button:focus { border-color:#e5bd59; }
+#credit-ledger-view .lc-close { width:32px; height:40px; padding:0; color:#c6c9b6; background:transparent; border-color:transparent; font-size:22px; }
+#credit-ledger-view .lc-widget { position:relative; display:flex; flex-direction:column; width:100%; height:100%; padding:16px; }
+#credit-ledger-view .lc-widget > div { flex-shrink:0; }
+#credit-ledger-view .lc-widget-header { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; height:32px; cursor:move; user-select:none; }
+#credit-ledger-view .lc-widget-title { color:#c6b780; font-size:11px; letter-spacing:1.2px; }
+#credit-ledger-view .lc-widget-actions { display:flex; flex-direction:row; align-items:center; height:32px; }
+#credit-ledger-view .lc-widget-details { width:96px; height:32px; padding:0 8px; font-size:11px; color:#d6d3c9; background:transparent; border-color:rgba(158,161,153,0.30); }
+#credit-ledger-view .lc-widget-close { width:32px; height:32px; padding:0; margin-left:8px; color:#b4b7b3; background:transparent; border-color:transparent; font-size:22px; }
+#credit-ledger-view .lc-widget-metrics { display:flex; flex-direction:row; align-items:center; width:100%; height:64px; flex-grow:1; min-height:0;  flex-shrink:1;}
+#credit-ledger-view .lc-widget-percent { width:128px; flex-shrink:0; color:#e5c679; font-size:32px; line-height:1; letter-spacing:-0.8px; }
+#credit-ledger-view .lc-widget-numbers { display:flex; flex-direction:column; justify-content:center; width:0; flex-basis:0px; flex-grow:1; flex-shrink:1; min-width:0; }
+#credit-ledger-view .lc-widget-progress { display:flex; flex-direction:row; align-items:baseline; width:100%; min-height:24px; color:#eeeae0; font-size:18px; line-height:1.25; }
+#credit-ledger-view .lc-widget-progress-long { font-size:15px; }
+#credit-ledger-view .lc-widget-status { display:flex; flex-direction:row; align-items:baseline; width:100%; min-height:15px; margin-top:8px; color:#aeb5b3; font-size:11px; line-height:1.3; }
+#credit-ledger-view .lc-widget-chart { display:flex; flex-direction:column; width:100%; height:32px; cursor:move; user-select:none; }
+#credit-ledger-view .lc-widget-meter { width:100%; height:12px; background:rgba(199,204,201,0.16); border-radius:6px; overflow:hidden; }
+#credit-ledger-view .lc-widget-fill { width:0; height:12px; background:#98d57b; }
+#credit-ledger-view .lc-widget-marks { display:flex; flex-direction:row; width:100%; height:15px; margin-top:3px; }
+#credit-ledger-view .lc-widget-mark { width:10%; height:12px; padding-right:1px; border-right:1px solid rgba(185,187,178,0.18); color:#7f8986; text-align:right; font-size:9px; line-height:10px; }
+#credit-ledger-view .lc-widget-mark-last { border-right:none; padding-right:0; }
+#credit-ledger-view .lc-widget-footer { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; height:32px; padding-top:8px; border-top:1px solid rgba(174,184,178,0.14); font-size:11px; }
+#credit-ledger-view .lc-widget-period { display:flex; flex-direction:row; align-items:baseline; width:65%; color:#aeb6b2; }
+#credit-ledger-view .lc-widget-balance { width:35%; color:#c7ceca; text-align:right; }
+#credit-ledger-view .lc-widget-complete .lc-widget-fill { background:#98d57b; }
+#credit-ledger-view .lc-widget-complete .lc-widget-status { color:#d5c28f; }
+#credit-ledger-view .lc-widget-negative .lc-widget-status { color:#f07171; }
+/* Two small, finite bursts stay inside the existing goal surface. */
+#credit-ledger-view .lc-celebration-sparks { position:absolute; display:block; left:0; top:30px; width:100%; height:94px; overflow:hidden; pointer-events:none; }
+#credit-ledger-view .lc-spark-burst { position:absolute; display:block; left:22%; top:49%; width:1px; height:1px; pointer-events:none; }
+#credit-ledger-view .lc-spark-burst-second { left:79%; top:38%; }
+#credit-ledger-view .lc-spark { position:absolute; display:block; left:0; top:0; width:3px; height:3px; border-radius:2px; background:#8dd36a; opacity:0; pointer-events:none; animation-duration:950ms; animation-iteration-count:1; animation-timing-function:ease-out; animation-fill-mode:both; }
+#credit-ledger-view .lc-spark-burst-second .lc-spark { animation-delay:180ms; }
+#credit-ledger-view .lc-spark-warm { background:#d4bd78; }
+#credit-ledger-view .lc-spark-0 { animation-name:lc-spark-n; }
+#credit-ledger-view .lc-spark-1 { animation-name:lc-spark-ne; }
+#credit-ledger-view .lc-spark-2 { animation-name:lc-spark-e; }
+#credit-ledger-view .lc-spark-3 { animation-name:lc-spark-se; }
+#credit-ledger-view .lc-spark-4 { animation-name:lc-spark-s; }
+#credit-ledger-view .lc-spark-5 { animation-name:lc-spark-sw; }
+#credit-ledger-view .lc-spark-6 { animation-name:lc-spark-w; }
+#credit-ledger-view .lc-spark-7 { animation-name:lc-spark-nw; }
+@keyframes lc-spark-n { 0% { opacity:0; transform:translate(0,0); } 15% { opacity:0.65; } 100% { opacity:0; transform:translate(0,-29px); } }
+@keyframes lc-spark-ne { 0% { opacity:0; transform:translate(0,0); } 15% { opacity:0.65; } 100% { opacity:0; transform:translate(25px,-23px); } }
+@keyframes lc-spark-e { 0% { opacity:0; transform:translate(0,0); } 15% { opacity:0.65; } 100% { opacity:0; transform:translate(34px,0); } }
+@keyframes lc-spark-se { 0% { opacity:0; transform:translate(0,0); } 15% { opacity:0.65; } 100% { opacity:0; transform:translate(24px,23px); } }
+@keyframes lc-spark-s { 0% { opacity:0; transform:translate(0,0); } 15% { opacity:0.65; } 100% { opacity:0; transform:translate(0,31px); } }
+@keyframes lc-spark-sw { 0% { opacity:0; transform:translate(0,0); } 15% { opacity:0.65; } 100% { opacity:0; transform:translate(-22px,24px); } }
+@keyframes lc-spark-w { 0% { opacity:0; transform:translate(0,0); } 15% { opacity:0.65; } 100% { opacity:0; transform:translate(-33px,0); } }
+@keyframes lc-spark-nw { 0% { opacity:0; transform:translate(0,0); } 15% { opacity:0.65; } 100% { opacity:0; transform:translate(-25px,-22px); } }
+#credit-ledger-view .lc-widget-celebrating .lc-widget-status, #credit-ledger-view .lc-goal-celebrating #lc-remaining { color:#8dd36a; }
+#credit-ledger-view .lc-widget-celebrating .lc-widget-fill, #credit-ledger-view .lc-goal-celebrating .lc-fill { background:#8dd36a; }
+#credit-ledger-view .lc-goal-progress .lc-celebration-sparks { top:0; height:108px; }
+@media (prefers-reduced-motion:reduce) { #credit-ledger-view .lc-celebration-sparks { display:none; } }
+#credit-ledger-view .lc-body { display:flex; flex-direction:row; width:100%; flex-grow:1; flex-shrink:1; flex-basis:0px; min-height:0; }
+#credit-ledger-view .lc-scroll-frame { position:relative; }
+#credit-ledger-view .lc-scroll-viewport { overflow:hidden; }
+#credit-ledger-view .lc-content { display:flex; flex-direction:column; align-items:stretch; width:100%; height:100%; padding:24px 32px 24px 24px; }
+#credit-ledger-view .lc-content > div { flex-shrink:0; }
+#credit-ledger-view .lc-status-row { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; min-height:24px; margin-bottom:16px; }
+#credit-ledger-view .lc-status { width:80%; color:#99a5a5; font-size:12px; }
+#credit-ledger-view .lc-link-button { width:88px; height:28px; color:#cfc591; background:transparent; }
+#credit-ledger-view .lc-banner { padding:8px 16px; margin-bottom:16px; color:#f1a397; background:#3a2822; border:1px solid #70483c; font-size:12px; }
+#credit-ledger-view .lc-summary { display:flex; flex-direction:row; width:100%; margin-bottom:24px; }
+#credit-ledger-view .lc-stat { display:flex; flex-direction:column; width:24.175%; min-width:0; padding:16px; margin-left:1.1%; background:rgba(174,184,178,0.04); border:1px solid rgba(174,184,178,0.15); border-radius:8px; flex-shrink:0; }
+#credit-ledger-view .lc-stat-first { margin-left:0; border-color:rgba(201,171,98,0.32); background:rgba(201,171,98,0.04); }
+#credit-ledger-view .lc-stat-remaining { border-color:rgba(201,171,98,0.25); background:rgba(201,171,98,0.035); }
+#credit-ledger-view .lc-stat .lc-label { min-height:32px; font-size:12px; }
+#credit-ledger-view .lc-stat-context { margin-top:8px; color:#b1bdb8; font-size:12px; }
+#credit-ledger-view .lc-stat-note { margin-top:8px; color:#8c9997; font-size:11px; }
+#credit-ledger-view .lc-label { color:#aeb9b5; font-size:14px; }
+#credit-ledger-view .lc-value { margin-top:8px; color:#e9e5d9; font-size:28px; line-height:1.2; white-space:nowrap; }
+#credit-ledger-view .lc-value-long { font-size:18px; }
+#credit-ledger-view .lc-panel { display:flex; flex-direction:column; width:100%; flex-shrink:0; padding:24px; margin-top:24px; background:rgba(174,184,178,0.035); border:1px solid rgba(174,184,178,0.15); border-radius:8px; }
+#credit-ledger-view .lc-panel > div { flex-shrink:0; }
+#credit-ledger-view .lc-goal { display:flex; flex-direction:column; width:100%; margin-top:0; padding:24px; background:rgba(201,171,98,0.035); border-color:rgba(201,171,98,0.3); }
+#credit-ledger-view .lc-goal > div { flex-shrink:0; }
+#credit-ledger-view .lc-section-title { color:#ece8dc; font-size:16px; }
+#credit-ledger-view .lc-goal-title { margin-bottom:16px; color:#d9be79; }
+#credit-ledger-view .lc-field-label { margin-bottom:8px; }
+#credit-ledger-view .lc-target-field { display:flex; flex-direction:row; width:100%; height:48px; }
+#credit-ledger-view .lc-target { display:flex; width:85%; height:48px; flex-shrink:1; flex-grow:1; padding:8px 16px; border:1px solid rgba(189,168,107,0.32); border-radius:8px; background:rgba(5,10,13,0.5); color:#f0ede0; font-family:Arial,sans-serif; font-size:22px; outline:none; }
+#credit-ledger-view .lc-stepper { display:flex; flex-direction:column; width:56px; height:48px; flex-shrink:0; margin-left:8px; }
+#credit-ledger-view .lc-step { width:56px; height:24px; padding:0; border-color:rgba(189,168,107,0.3); background:rgba(201,171,98,0.06); }
+#credit-ledger-view .lc-step-up { margin-bottom:0; }
+#credit-ledger-view .lc-arrow-up { width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:7px solid #e5bd59; }
+#credit-ledger-view .lc-arrow-down { width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:7px solid #e5bd59; }
+#credit-ledger-view .lc-step-hint { margin-top:8px; }
+#credit-ledger-view .lc-target:focus { border-color:#dfbd67; }
+#credit-ledger-view .lc-target-invalid { border-color:#ce8676; }
+#credit-ledger-view .lc-goal-actions { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; margin-top:16px; }
+#credit-ledger-view .lc-draft-status { width:68%; padding-right:16px; }
+#credit-ledger-view .lc-save { width:208px; height:40px; padding:8px 16px; color:#f0d899; background:rgba(201,171,98,0.17); border-color:rgba(201,171,98,0.62); border-radius:5px; }
+#credit-ledger-view .lc-goal-reset-row { display:flex; flex-direction:row; align-items:center; width:100%; margin-top:16px; }
+#credit-ledger-view .lc-goal-reset { width:208px; height:40px; padding:8px 16px; background:transparent; border-color:rgba(174,184,178,0.3); }
+#credit-ledger-view .lc-goal-reset-help { flex-shrink:1; width:0; flex-basis:0; flex-grow:1; padding-left:16px; }
+#credit-ledger-view .lc-disabled, #credit-ledger-view .lc-disabled:hover { color:#828d88; background:rgba(174,184,178,0.04); border-color:rgba(174,184,178,0.15); }
+#credit-ledger-view .lc-input-error { margin-top:8px; color:#f1a397; font-size:12px; }
+#credit-ledger-view .lc-goal-progress { position:relative; display:flex; flex-direction:column; width:100%; margin-top:24px; padding-top:16px; border-top:1px solid rgba(189,168,107,0.18); }
+#credit-ledger-view .lc-progress-line { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; }
+#credit-ledger-view .lc-progress-text { width:78%; color:#e1dfcb; font-size:19px; }
+#credit-ledger-view .lc-percent { width:20%; text-align:right; color:#dec384; font-size:28px; line-height:1.2; }
+#credit-ledger-view .lc-meter { display:flex; flex-direction:row; width:100%; height:12px; margin:8px 0 0; background:rgba(199,204,201,0.16); border-radius:6px; overflow:hidden; }
+#credit-ledger-view .lc-fill { width:0; height:12px; background:#98d57b; flex-shrink:0; }
+#credit-ledger-view .lc-detail-marks { display:flex; flex-direction:row; width:100%; height:17px; margin-top:4px; margin-bottom:8px; }
+#credit-ledger-view .lc-foot { color:#9eada8; font-size:13px; }
+#credit-ledger-view .lc-base-note { margin-top:8px; color:#afab92; }
+#credit-ledger-view .lc-detail-header { display:flex; flex-direction:column; align-items:flex-start; width:100%; margin:0 0 16px; }
+#credit-ledger-view .lc-history-picker { position:relative; width:100%; margin-top:8px; }
+#credit-ledger-view .lc-mode-picker { display:flex; flex-direction:column; width:100%; margin-top:16px; }
+#credit-ledger-view .lc-vehicle-picker { display:flex; flex-direction:column; width:100%; margin-top:16px; }
+#credit-ledger-view .lc-vehicle-status-row { display:flex; flex-direction:row; align-items:center; width:100%; }
+#credit-ledger-view .lc-vehicle-status-row .lc-foot { flex-grow:1; flex-shrink:1; }
+#credit-ledger-view .lc-vehicle-retry { width:100px; height:30px; margin:8px 0 0 16px; }
+#credit-ledger-view .lc-mode-help { margin-top:8px; font-size:11px; }
+#credit-ledger-view .lc-mode-menu { display:flex; flex-direction:column; width:100%; height:154px; margin-top:8px; border:1px solid rgba(201,171,98,0.45); border-radius:5px; background:#161e21; }
+#credit-ledger-view .lc-mode-options { display:flex; flex-direction:column; width:100%; height:100%; padding:8px 24px 8px 8px; }
+#credit-ledger-view .lc-mode-option { justify-content:flex-start; text-align:left; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;  height:56px; min-height:56px; padding:8px;}
+#credit-ledger-view .lc-history-toggle { width:100%; height:40px; justify-content:space-between; padding:8px 16px; color:#d8dfd8; background:rgba(5,10,13,0.35); border-color:rgba(174,184,178,0.25); border-radius:5px; }
+#credit-ledger-view .lc-history-label { width:92%; height:20px; text-align:left; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+#credit-ledger-view .lc-chevron { width:5%; text-align:right; }
+#credit-ledger-view .lc-history-menu { position:relative; width:100%; height:410px; margin-top:8px; border:1px solid rgba(201,171,98,0.45); border-radius:5px; background:#161e21; box-shadow:0 5px 18px rgba(0,0,0,0.25); }
+#credit-ledger-view .lc-history-options { display:flex; flex-direction:column; width:100%; height:100%; padding:8px 24px 0 8px; }
+#credit-ledger-view .lc-history-list { display:flex; flex-direction:column; width:100%; flex-shrink:0; }
+#credit-ledger-view .lc-history-option, #credit-ledger-view .lc-mode-option { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; height:40px; padding:8px; background:transparent; border-color:transparent; border-radius:0; }
+#credit-ledger-view .lc-mode-option { justify-content:flex-start;  height:56px; min-height:56px; padding:8px;}
+#credit-ledger-view .lc-mode-option { height:56px; min-height:56px; padding:8px; }
+#credit-ledger-view .lc-mode-toggle { height:56px; }
+#credit-ledger-view .lc-vehicle-toggle { height:56px; }
+#credit-ledger-view .lc-mode-art { display:flex; flex-direction:row; align-items:center; justify-content:center; width:40px; height:40px; flex-shrink:0; margin-right:8px; }
+#credit-ledger-view .lc-mode-art .lc-mode-art { margin-right:0; }
+#credit-ledger-view .lc-mode-art img { width:40px; height:40px; object-fit:contain; }
+#credit-ledger-view .lc-filter-label, #credit-ledger-view .lc-filter-option-label { display:flex; flex-direction:row; align-items:center; width:0; height:22px; flex-basis:0; flex-grow:1; flex-shrink:1; min-width:0; text-align:left; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+#credit-ledger-view .lc-vehicle-option { height:56px; min-height:56px; }
+#credit-ledger-view .lc-filter-tank-icon, #credit-ledger-view .lc-filter-tank-space { display:flex; flex-direction:row; width:72px; height:42px; flex-shrink:0; margin-right:8px; }
+#credit-ledger-view .lc-vehicle-option .lc-tank-art, #credit-ledger-view .lc-vehicle-option .lc-tank-art img, #credit-ledger-view .lc-filter-tank-icon .lc-tank-art, #credit-ledger-view .lc-filter-tank-icon .lc-tank-art img { width:72px; height:42px; }
+#credit-ledger-view .lc-vehicle-option .lc-tank-art { margin-right:8px; }
+#credit-ledger-view .lc-history-option-selected { background:rgba(201,171,98,0.13); }
+#credit-ledger-view .lc-history-time { width:68%; text-align:left; font-size:12px; }
+#credit-ledger-view .lc-history-net { width:30%; text-align:right; white-space:nowrap; }
+#credit-ledger-view .lc-history-battle { height:72px; min-height:72px; }
+#credit-ledger-view .lc-history-battle .lc-history-time { display:flex; flex-direction:column; width:0; flex-basis:0; flex-grow:1; flex-shrink:1; min-width:0; padding-left:16px; }
+#credit-ledger-view .lc-history-tank { color:#eeeada; font-size:14px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+#credit-ledger-view .lc-history-stamp { display:flex; flex-direction:row; align-items:center; width:100%; height:24px; line-height:24px; color:#aeb69c; font-size:12px; margin-top:4px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+#credit-ledger-view .lc-history-stamp .lc-mode-art, #credit-ledger-view .lc-history-stamp .lc-mode-art img { width:24px; height:24px; }
+#credit-ledger-view .lc-history-stamp .lc-mode-art { margin-right:8px; }
+#credit-ledger-view .lc-history-stamp-label { display:flex; flex-direction:row; align-items:center; height:24px; min-width:0; flex-basis:0; flex-grow:1; flex-shrink:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+#credit-ledger-view .lc-history-battle .lc-history-net { width:22%; flex-shrink:0; }
+#credit-ledger-view .lc-detail-vehicles { display:flex; flex-direction:column; width:100%; margin:4px 0 16px; }
+#credit-ledger-view .lc-detail-mode { display:flex; flex-direction:row; align-items:center; width:100%; flex-shrink:0; padding:8px 8px; margin-bottom:8px; border-left:2px solid rgba(201,171,98,0.45); color:#d9c58f; background:rgba(201,171,98,0.04); font-size:13px; }
+#credit-ledger-view .lc-mode-detail-label { display:flex; flex-direction:row; flex-grow:1; flex-shrink:1; width:0; flex-basis:0; min-width:0; }
+#credit-ledger-view .lc-tank-card { display:flex; flex-direction:row; align-items:center; width:100%; min-height:104px; padding:8px 16px; margin-bottom:8px; border:1px solid rgba(174,184,178,0.15); border-radius:8px; background:rgba(174,184,178,0.04); }
+#credit-ledger-view .lc-tank-art { display:flex; position:relative; align-items:center; justify-content:center; width:144px; height:76px; flex-shrink:0; }
+#credit-ledger-view .lc-tank-art img { position:absolute; width:144px; height:76px; object-fit:contain; }
+#credit-ledger-view .lc-tank-placeholder { color:#919a83; font-size:11px; text-align:center; }
+#credit-ledger-view .lc-tank-info { display:flex; flex-direction:column; padding-left:16px; flex-grow:1; min-width:0; }
+#credit-ledger-view .lc-tank-name { font-size:22px; color:#eae7dc; }
+#credit-ledger-view .lc-tank-tier { align-self:flex-start; font-size:12px; color:#d9bd72; margin-top:8px; padding:3px 8px; border:1px solid rgba(201,171,98,0.25); border-radius:3px; background:rgba(201,171,98,0.06); }
+#credit-ledger-view .lc-history-battle .lc-tank-art, #credit-ledger-view .lc-history-battle .lc-tank-art img { width:88px; height:48px; }
+#credit-ledger-view .lc-costs, #credit-ledger-view .lc-wallet { display:flex; flex-direction:column; width:100%; }
+#credit-ledger-view .lc-cost-row { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; min-height:40px; padding:8px 0; border-bottom:1px solid rgba(174,184,178,0.07); flex-shrink:0; }
+#credit-ledger-view .lc-cost-name { width:72%; color:#b9c5bf; font-size:14px; }
+#credit-ledger-view .lc-cost-value { width:27%; text-align:right; color:#e5e8d9; white-space:nowrap; }
+#credit-ledger-view .lc-reserve-note { margin-top:8px; color:#95a69c; font-size:11px; }
+#credit-ledger-view .lc-cost-net { margin-top:8px; padding-top:16px; border-top:1px solid rgba(201,171,98,0.24); border-bottom:none; }
+#credit-ledger-view .lc-cost-net .lc-cost-value { font-size:18px; }
+#credit-ledger-view .lc-detail-rewards { display:flex; flex-direction:column; width:100%; margin-top:8px; }
+#credit-ledger-view .lc-history-control { display:flex; flex-direction:column; width:100%; margin-top:24px; padding:24px; background:rgba(174,184,178,0.035); border:1px solid rgba(174,184,178,0.15); border-radius:8px; }
+#credit-ledger-view .lc-history-control > div { flex-shrink:0; }
+#credit-ledger-view .lc-history-control-title { margin-bottom:8px; color:#dbc77d; }
+#credit-ledger-view .lc-option-active, #credit-ledger-view .lc-option-active:hover { color:#ecd397; background:rgba(201,171,98,0.16); border-color:rgba(201,171,98,0.55); }
+#credit-ledger-view .lc-history-settings-status { min-height:20px; margin-top:8px; }
+#credit-ledger-view .lc-history-control-actions { display:flex; flex-direction:column; align-items:flex-start; width:100%; margin-top:8px; }
+#credit-ledger-view .lc-history-control-actions button { margin-top:8px; }
+#credit-ledger-view .lc-history-reset { width:240px; height:40px; padding:8px 8px; color:#e6c6aa; border-color:#806a4d; background:#4a3e2c; }
+#credit-ledger-view .lc-history-confirmation { display:flex; flex-direction:column; width:100%; margin-top:16px; padding:16px; border:1px solid #92764e; background:#373124; }
+#credit-ledger-view .lc-history-confirm-actions { display:flex; flex-direction:column; align-items:flex-start; width:100%; }
+#credit-ledger-view .lc-history-confirm-actions button { margin-top:8px; }
+#credit-ledger-view .lc-history-cancel { width:130px; height:34px; }
+#credit-ledger-view .lc-history-control .lc-disabled, #credit-ledger-view .lc-history-control .lc-disabled:hover { color:#828d88; background:rgba(174,184,178,0.04); border-color:rgba(174,184,178,0.15); }
+#credit-ledger-view .lc-section-gap { margin-top:0; margin-bottom:8px; }
+#credit-ledger-view .lc-empty { margin-top:8px; padding:8px; color:#aeb69c; font-size:12px; }
+#credit-ledger-view .lc-rewards-box { width:100%; height:190px; margin-top:16px; border:1px solid rgba(174,184,178,0.12); border-radius:5px; background:rgba(5,10,13,0.25); }
+#credit-ledger-view .lc-rewards-viewport { display:flex; flex-direction:column; width:100%; height:100%; padding:8px 24px 8px 8px; }
+#credit-ledger-view .lc-rewards-list { display:flex; flex-direction:column; width:100%; flex-shrink:0; }
+#credit-ledger-view .lc-reward { display:flex; flex-direction:column; width:100%; padding:8px 0; border-bottom:1px solid rgba(174,184,178,0.1); flex-shrink:0; }
+#credit-ledger-view .lc-reward-line { display:flex; flex-direction:row; justify-content:space-between; width:100%; }
+#credit-ledger-view .lc-reward-title { width:74%; color:#d9e0da; font-size:13px; }
+#credit-ledger-view .lc-reward-amount { width:25%; text-align:right; font-size:13px; }
+#credit-ledger-view .lc-reward-context { width:100%; color:#8e9e99; font-size:11px; margin-top:8px; }
+#credit-ledger-view .lc-footer-note { width:100%; color:#8f9980; font-size:11px; margin-top:16px; }
+#credit-ledger-view .lc-bottom { display:flex; flex-direction:row; justify-content:space-between; width:100%; height:40px; flex-shrink:0; padding:8px 24px; color:#8c9b95; background:rgba(9,14,17,0.75); border-top:1px solid rgba(174,184,178,0.12); font-size:10px; letter-spacing:0.4px; }
+#credit-ledger-view .lc-scroll-track { position:absolute; top:8px; bottom:8px; right:8px; width:8px; background:rgba(174,184,178,0.08); border-radius:4px; cursor:pointer; z-index:35; }
+#credit-ledger-view .lc-scroll-thumb { position:absolute; top:0; left:0; width:8px; height:36px; background:rgba(189,168,107,0.65); border-radius:4px; cursor:pointer; }
+#credit-ledger-view .lc-scroll-thumb:hover { background:#d8bd69; }
+#credit-ledger-view .lc-amount-line { display:flex; flex-direction:row; align-items:baseline; flex-wrap:wrap; }
+#credit-ledger-view .lc-amount { display:flex; flex-direction:row; flex-shrink:0; white-space:nowrap; }
+#credit-ledger-view .lc-text-part { display:flex; flex-direction:row; flex-shrink:1; min-width:0; white-space:pre-wrap; }
+#credit-ledger-view .lc-widget .lc-amount-line { flex-wrap:nowrap; }
+#credit-ledger-view .lc-widget .lc-text-part { flex-shrink:0; white-space:pre; }
+#credit-ledger-view .lc-positive { color:#8dd36a; }
+#credit-ledger-view .lc-negative { color:#f07171; }
+#credit-ledger-view .lc-muted { color:#a5ac97; }
+#credit-ledger-view .lc-fill-complete { background:#a6cf91; }
+#credit-ledger-view .lc-hidden { display:none; }
+@media (max-width:1000px) {
+ #credit-ledger-view .lc-summary { flex-direction:row; flex-wrap:wrap;  margin-bottom:24px;}
+ #credit-ledger-view .lc-stat { width:49.45%; padding:16px; margin-left:0; margin-bottom:8px;  border-radius:8px;}
+ #credit-ledger-view .lc-stat:nth-child(even) { margin-left:1.1%; }
+}
+@media (max-width:600px) {
+ #credit-ledger-view .lc-brand-mark { display:none;  width:48px; height:48px; border-radius:24px;}
+ #credit-ledger-view .lc-header { height:96px; padding:16px 24px; flex-direction:column; align-items:flex-start; }
+ #credit-ledger-view .lc-heading { width:100%; flex-grow:0; margin-bottom:8px; }
+ #credit-ledger-view .lc-title { font-size:24px;  margin:8px 0 0;}
+ #credit-ledger-view .lc-content { padding:24px 32px 24px 24px; }
+ #credit-ledger-view .lc-summary { flex-direction:column;  margin-bottom:24px;}
+ #credit-ledger-view .lc-stat { width:100%; padding:16px; margin-left:0; margin-bottom:8px;  border-radius:8px;}
+ #credit-ledger-view .lc-stat:nth-child(even) { margin-left:0; }
+ #credit-ledger-view .lc-label { font-size:11px; }
+ #credit-ledger-view .lc-value { font-size:19px; }
+ #credit-ledger-view .lc-goal { padding:24px;  margin-top:0;}
+ #credit-ledger-view .lc-panel { padding:24px;  margin-top:24px;}
+ #credit-ledger-view .lc-goal-actions { flex-direction:column; align-items:flex-start; }
+ #credit-ledger-view .lc-draft-status { width:100%; margin-bottom:8px; padding-right:0; }
+ #credit-ledger-view .lc-goal-reset-row { flex-direction:column; align-items:flex-start; }
+ #credit-ledger-view .lc-goal-reset-help { width:100%; flex-basis:auto; margin-top:8px; padding-left:0; }
+ #credit-ledger-view .lc-mode-art { margin-right:8px; }
+ #credit-ledger-view .lc-filter-option-label, #credit-ledger-view .lc-filter-label { font-size:12px; }
+ #credit-ledger-view .lc-filter-tank-icon, #credit-ledger-view .lc-filter-tank-space { width:58px; margin-right:8px; }
+ #credit-ledger-view .lc-vehicle-option .lc-tank-art, #credit-ledger-view .lc-vehicle-option .lc-tank-art img, #credit-ledger-view .lc-filter-tank-icon .lc-tank-art, #credit-ledger-view .lc-filter-tank-icon .lc-tank-art img { width:58px; }
+ #credit-ledger-view .lc-vehicle-option .lc-tank-art { margin-right:8px; }
+ #credit-ledger-view .lc-progress-text { font-size:15px; }
+ #credit-ledger-view .lc-percent { font-size:22px; }
+ #credit-ledger-view .lc-header-actions { width:100%; justify-content:flex-end; }
+ #credit-ledger-view .lc-language-controls { margin-right:16px;  width:168px;}
+ #credit-ledger-view .lc-back-widget { width:144px; height:40px; font-size:11px; margin-right:4px; }
+ #credit-ledger-view .lc-header-actions .lc-close { width:30px; }
+}
+@media (max-width:479px) {
+ #credit-ledger-view .lc-header { height:96px;  padding:16px 24px;}
+ #credit-ledger-view .lc-language-controls { width:168px; margin-right:16px; }
+ #credit-ledger-view .lc-language-buttons { width:168px;  height:32px;}
+ #credit-ledger-view .lc-language { width:80px; font-size:10px;  height:32px; padding:0 8px;}
+ #credit-ledger-view .lc-eyebrow { display:none; }
+ #credit-ledger-view .lc-widget { padding:16px; }
+ #credit-ledger-view .lc-widget-title { font-size:9px; letter-spacing:0.7px; }
+ #credit-ledger-view .lc-widget-percent { width:128px; font-size:32px; }
+ #credit-ledger-view .lc-widget-progress { font-size:18px;  min-height:24px;}
+ #credit-ledger-view .lc-widget-progress-long { font-size:12px; }
+ #credit-ledger-view .lc-widget .lc-widget-progress-long { flex-wrap:wrap; }
+ #credit-ledger-view .lc-widget .lc-widget-status.lc-amount-line { flex-wrap:wrap; }
+ #credit-ledger-view .lc-widget-status { font-size:10px;  margin-top:8px;}
+ #credit-ledger-view .lc-widget-footer { flex-direction:column; align-items:flex-start; height:32px; padding-top:8px; }
+ #credit-ledger-view .lc-widget-period, #credit-ledger-view .lc-widget-balance { width:100%; text-align:left; }
+}
+
+#credit-ledger-view .lc-archive { display:flex; flex-direction:column; width:100%; margin-top:24px; padding:0; background:rgba(174,184,178,0.025); }
+#credit-ledger-view .lc-archive-toggle { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; height:56px; padding:8px 24px; border:0; background:transparent; color:#d4d8cc; font-size:13px; text-align:left; cursor:pointer; }
+#credit-ledger-view .lc-archive-heading-label { display:flex; flex-direction:row; align-items:center; width:0; min-width:0; flex-grow:1; flex-shrink:1; margin-right:16px; }
+#credit-ledger-view .lc-archive-expand { display:flex; flex-direction:row; align-items:center; justify-content:center; width:32px; height:32px; flex-shrink:0; color:#e4c879; background:rgba(201,171,98,0.10); border:1px solid rgba(201,171,98,0.60); border-radius:4px; font-size:24px; line-height:24px; pointer-events:none; }
+#credit-ledger-view .lc-archive-toggle:hover, #credit-ledger-view .lc-archive-toggle:focus { background:rgba(201,171,98,0.065); }
+#credit-ledger-view .lc-archive-toggle:focus { box-shadow:inset 0 0 0 1px rgba(229,189,89,0.65); }
+#credit-ledger-view .lc-archive-toggle:hover .lc-archive-expand, #credit-ledger-view .lc-archive-toggle:focus .lc-archive-expand { color:#f3da91; border-color:#dabb6f; background:rgba(201,171,98,0.18); }
+#credit-ledger-view .lc-archive-open .lc-archive-expand { background:rgba(201,171,98,0.16); }
+#credit-ledger-view .lc-archive-panel { display:flex; flex-direction:column; width:100%; padding:0 24px 24px; }
+#credit-ledger-view .lc-archive-help { width:100%; margin:8px 0 8px; }
+#credit-ledger-view .lc-archive-status { min-height:18px; width:100%; margin-bottom:8px; }
+#credit-ledger-view .lc-archive-filters { display:flex; flex-direction:column; width:100%; }
+#credit-ledger-view .lc-archive-field { display:flex; flex-direction:column; width:100%; margin-bottom:16px; }
+#credit-ledger-view .lc-archive-field .lc-history-toggle { display:flex; flex-direction:row; align-items:center; min-height:40px; height:40px; }
+#credit-ledger-view #lc-archive-day-icon { display:none; }
+#credit-ledger-view #lc-archive-mode-icon { width:40px; height:40px; margin-right:8px; }
+#credit-ledger-view #lc-archive-mode-toggle { min-height:56px; height:56px; }
+#credit-ledger-view #lc-archive-day-list .lc-mode-option { height:48px; min-height:48px; }
+#credit-ledger-view .lc-archive-heading { display:flex; flex-direction:row; align-items:center; justify-content:space-between; width:100%; min-height:30px; margin-bottom:8px; }
+#credit-ledger-view .lc-archive-battles { display:flex; flex-direction:column; width:100%; height:56px; border:1px solid rgba(174,184,178,0.16); border-radius:5px; background:#161e21; }
+#credit-ledger-view .lc-archive-detail-title { width:100%; margin-top:16px; color:#d6c896; }
+#credit-ledger-view .lc-archive-battles .lc-history-option { width:100%; }
+@media (max-width:600px) {
+ #credit-ledger-view .lc-archive-panel { padding:0 24px 24px; }
+ #credit-ledger-view .lc-archive-toggle { padding:8px 24px;  height:56px;}
+ #credit-ledger-view .lc-archive-battles .lc-tank-art, #credit-ledger-view .lc-archive-battles .lc-tank-art img { width:60px; height:42px; }
+ #credit-ledger-view .lc-archive-battles .lc-history-time { padding-left:8px; }
+ #credit-ledger-view .lc-archive-battles .lc-history-net { width:28%; font-size:12px; }
+}
+
+#credit-ledger-view .lc-hidden { display:none; }
+
+/* 8pt layout. Inline summary widths keep explicit Gameface flex dimensions.
+   1px borders and 4px optical label spacing are intentional exceptions. */
+@media (max-width:600px) {
+ #credit-ledger-view .lc-header { padding:16px; }
+ #credit-ledger-view .lc-content { padding:16px 32px 24px 16px; }
+ #credit-ledger-view .lc-panel, #credit-ledger-view .lc-goal { padding:16px; }
+ #credit-ledger-view .lc-header-actions .lc-close { width:32px; }
+ #credit-ledger-view .lc-back-widget { margin-right:8px; }
+ #credit-ledger-view .lc-archive-panel { padding:0 16px 16px; }
+ #credit-ledger-view .lc-archive-toggle { padding:8px 16px; }
+}
+@media (max-width:479px) {
+ #credit-ledger-view .lc-language-controls { margin-right:8px; }
+ #credit-ledger-view .lc-language-buttons { width:136px; }
+ #credit-ledger-view .lc-widget-percent { width:104px; }
+ #credit-ledger-view .lc-widget-progress { font-size:16px; }
+ #credit-ledger-view .lc-widget-progress-long { font-size:12px; }
+}
+@media (max-width:360px) {
+ #credit-ledger-view .lc-header { height:192px; }
+ #credit-ledger-view .lc-header-actions { flex-wrap:wrap; justify-content:flex-start; }
+ #credit-ledger-view .lc-language-controls { width:100%; margin:0 0 8px; }
+}
+/* Live circular shortcut: explicit SVG path geometry works with Gameface's
+   dash support without CSS conic gradients or additional packaged images. */
+#credit-ledger-view .lc-progress-ring { position:absolute; display:block; width:80px; height:80px; pointer-events:none; }
+#credit-ledger-view .lc-minimized-ring { left:0; top:0; width:112px; height:112px; }
+#credit-ledger-view .lc-progress-ring-track { fill:none; stroke:#46504a; stroke-width:8px; }
+#credit-ledger-view .lc-progress-ring-value { display:none; fill:none; stroke:#98d57b; stroke-width:8px; stroke-linecap:round; }
+#credit-ledger-view .lc-progress-circle-label { display:flex; align-items:center; justify-content:center; width:100%; height:100%; color:#ede9dc; font-size:inherit; line-height:24px; white-space:nowrap; pointer-events:none; }
+#credit-ledger-view .lc-circle-control { position:relative; width:40px; height:40px; padding:0; border:0; border-radius:20px; background:transparent; font-size:11px; }
+#credit-ledger-view .lc-control-ring { left:0; top:0; width:40px; height:40px; }
+#credit-ledger-view .lc-header-actions .lc-close.lc-circle-control { width:40px; }
+#credit-ledger-view .lc-circle-control:focus { box-shadow:inset 0 0 0 1px #e5bd59; }
+#credit-ledger-view .lc-circle-control:hover { background:rgba(201,171,98,0.09); }
+#credit-ledger-view .lc-minimized-restore:hover { background:transparent; }
+#credit-ledger-view .lc-widget-header, #credit-ledger-view .lc-widget-actions { height:40px; }
+#credit-ledger-view .lc-circle-complete .lc-progress-ring-value { stroke:#8dd36a; }
+#credit-ledger-view .lc-circle-complete .lc-progress-circle-label { color:#8dd36a; }
+#credit-ledger-view .lc-circle-inactive .lc-progress-circle-label { color:#aab4ad; }
+#credit-ledger-view .lc-circle-negative .lc-progress-circle-label { color:#f07171; }
