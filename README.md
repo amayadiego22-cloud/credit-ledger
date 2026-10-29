@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/cover-0.22.11-302x170.png" alt="Credit Ledger — Contabilidad de créditos" width="302" height="170">
+</p>
+
 # Credit Ledger / Contabilidad de créditos
 
 Mod para **World of Tanks PC de Wargaming** que muestra cuánto ganas o pierdes en créditos, tus gastos y el progreso de una meta personal.
@@ -5,6 +9,35 @@ Mod para **World of Tanks PC de Wargaming** que muestra cuánto ganas o pierdes 
 **Versión estable: 0.22.11 · Español / English**
 
 [English guide](README-en.md) · [Guía de uso](LEEME.md) · [Compilar el proyecto](docs/BUILD.md) · [WGMods](https://wgmods.net/8056/)
+
+## Así se ve
+
+![Widget del garaje y círculo de progreso de Credit Ledger](docs/01-widget-circle-0.22.11.png)
+
+Elige entre el panel ampliado y el círculo de progreso. El control para moverlo aparece al pasar el cursor.
+
+<details>
+<summary><strong>Ver las capturas: detalles, filtros e historial</strong></summary>
+
+### Detalles en español
+
+![Meta de créditos y detalles en español](docs/02-details-es-0.22.11.png)
+
+### Detalles en inglés
+
+![Meta de créditos y detalles en inglés](docs/03-details-en-0.22.11.png)
+
+### Desglose y filtros de batallas
+
+![Filtros por modo y vehículo, imágenes de tanques y desglose de ingresos y gastos](docs/04-battle-filters-0.22.11.png)
+
+### Historial por día
+
+![Historial por día con partidas y filtros](docs/05-daily-history-0.22.11.png)
+
+</details>
+
+*Las mismas vistas de presentación de 0.22.11 publicadas en WGMods; los importes son datos de demostración.*
 
 ## Funciones
 
@@ -46,7 +79,7 @@ El ZIP de GitHub **Code → Download ZIP** contiene el código fuente; el ZIP de
 | `build_tools/` | Compilador local compatible con Python 2.7 |
 | `tests/` | Pruebas con datos sintéticos |
 
-El juego usa Python 2.7. Las herramientas de construcción y las pruebas se ejecutan con Python 3. No se incluyen archivos del cliente, DLL de Wargaming, imágenes nativas extraídas, capturas de cuentas ni credenciales.
+El juego usa Python 2.7. Las herramientas de construcción y las pruebas se ejecutan con Python 3. No se incluyen archivos del cliente, DLL de Wargaming, imágenes nativas por separado, capturas de cuentas ni credenciales.
 
 ## Probar el código
 

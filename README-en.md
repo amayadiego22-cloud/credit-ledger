@@ -1,4 +1,39 @@
+<p align="center">
+  <img src="docs/cover-0.22.11-302x170.png" alt="Credit Ledger — Credit goals and battle accounting" width="302" height="170">
+</p>
+
 # Credit Ledger — 0.22.11
+
+[Español](README.md) · [Download with installer](https://github.com/amayadiego22-cloud/credit-ledger/releases/tag/v0.22.11) · [WGMods](https://wgmods.net/8056/)
+
+## Interface preview
+
+![Credit Ledger garage widget and circular goal progress](docs/01-widget-circle-0.22.11.png)
+
+Choose the expanded panel or the compact progress circle. The Move handle appears when you hover over it.
+
+<details>
+<summary><strong>View screenshots: details, filters and daily history</strong></summary>
+
+### Details in English
+
+![Credit goals and account details in English](docs/03-details-en-0.22.11.png)
+
+### Details in Spanish
+
+![Credit goals and account details in Spanish](docs/02-details-es-0.22.11.png)
+
+### Battle breakdown and filters
+
+![Game mode and vehicle filters, tank images, income and expenses](docs/04-battle-filters-0.22.11.png)
+
+### Daily battle history
+
+![Daily battle history with recorded battles and filters](docs/05-daily-history-0.22.11.png)
+
+</details>
+
+*These are the same 0.22.11 interface previews published on WGMods. Amounts shown are demonstration data.*
 
 The entire circle highlights on hover, including its outer edge. Click anywhere on the disk to expand, or drag the Move handle to reposition it. Highlighting does not change the actual goal percentage.
 
