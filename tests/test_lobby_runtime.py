@@ -1,4 +1,4 @@
-"""Garage recovery follows the native GUI space and the account lifecycle."""
+"""Garage and matchmaking visibility follow native routes and account state."""
 import sys
 import copy
 import types
@@ -278,6 +278,117 @@ class LobbyRuntimeTests(unittest.TestCase):
                     self.assertTrue(self.collector._garage_visible)
         self.assertEqual(before, (self.collector.config, self.collector.ledger.to_dict(),
                                   self.collector.wallet.data))
+
+    def test_matchmaking_retains_widget_and_cancel_returns_without_resetting_data(self):
+        self.bind(LOBBY)
+        self.balance = 22000000
+        self.collector._sync_finance()
+        before = (copy.deepcopy(self.collector.config), self.collector.ledger.to_dict(),
+                  copy.deepcopy(self.collector.wallet.data))
+        event = self.lobby_machine.onVisibleRouteChanged
+
+        class EventQueue(harness.CommonQueueState):
+            pass
+
+        class HalloweenEventQueue(harness.HalloweenPreBattleQueueState):
+            pass
+
+        with patch.object(self.collector.panel, "ensure_visible") as ensure, \
+                patch.object(self.collector.panel, "close_window") as close:
+            queues = [queue_class() for _, queue_class in harness.QUEUE_STATE_TYPES]
+            for queue in queues + [EventQueue(), HalloweenEventQueue()]:
+                with self.subTest(queue=type(queue).__name__):
+                    self.lobby_machine.visibleState = queue
+                    event.emit(types.SimpleNamespace(state=queue))
+                    self.assertTrue(self.collector._garage_visible)
+                    ensure.assert_called_with(restore=True)
+                    close.assert_not_called()
+                    ensure.reset_mock()
+                    self.collector._tick()
+                    ensure.assert_called_with(restore=False)
+                    self.lobby_machine.visibleState = self.garage_state
+                    event.emit(types.SimpleNamespace(state=self.garage_state))
+                    self.assertTrue(self.collector._garage_visible)
+                    close.assert_not_called()
+        self.assertEqual(before, (self.collector.config, self.collector.ledger.to_dict(),
+                                  self.collector.wallet.data))
+
+    def test_queue_does_not_bypass_battle_space_avatar_or_replay_guards(self):
+        self.bind(LOBBY)
+        for _, queue_class in harness.QUEUE_STATE_TYPES:
+            with self.subTest(queue=queue_class.__name__):
+                self.loader.space = LOBBY
+                self.replay.isPlaying = lambda: False
+                self.collector._garage_recovery_allowed = True
+                self.lobby_machine.visibleState = queue_class()
+                self.lobby_machine.onVisibleRouteChanged.emit(None)
+                with patch.object(self.collector.panel, "ensure_visible") as ensure, \
+                        patch.object(self.collector.panel, "close_window") as close:
+                    self.loader.space = BATTLE
+                    self.loader.onGUISpaceLeft.emit(LOBBY)
+                    close.assert_called()
+                    self.collector._tick()
+                    ensure.assert_not_called()
+                    self.loader.space = LOBBY
+                    self.collector._on_avatar()
+                    self.collector._ensure_garage_widget(restore=True)
+                    ensure.assert_not_called()
+                    self.collector._garage_recovery_allowed = True
+                    self.replay.isPlaying = lambda: True
+                    self.collector._ensure_garage_widget(restore=True)
+                    ensure.assert_not_called()
+
+    def test_absent_optional_queue_modules_do_not_disable_other_registered_queues(self):
+        self.bind(LOBBY)
+        for missing_module, missing_class in harness.QUEUE_STATE_TYPES:
+            with self.subTest(missing=missing_class.__name__):
+                with patch.dict(sys.modules, {missing_module: None}):
+                    self.lobby_machine.visibleState = missing_class()
+                    self.assertFalse(self.collector._garage_view_visible())
+                    for registered_module, registered_class in harness.QUEUE_STATE_TYPES:
+                        if registered_module != missing_module:
+                            self.lobby_machine.visibleState = registered_class()
+                            self.assertTrue(self.collector._garage_view_visible())
+
+    def test_queue_class_name_and_module_strings_require_the_registered_native_class(self):
+        self.bind(LOBBY)
+        for module_name, native_class in harness.QUEUE_STATE_TYPES:
+            with self.subTest(queue=native_class.__name__):
+                foreign = type(native_class.__name__, (object,), {"hangar": False})
+                self.lobby_machine.visibleState = foreign()
+                self.assertFalse(self.collector._garage_view_visible())
+                spoof = type(native_class.__name__, (object,),
+                             {"__module__": module_name, "hangar": False})
+                self.lobby_machine.visibleState = spoof()
+                self.assertFalse(self.collector._garage_view_visible())
+                module = types.ModuleType(module_name)
+                with patch.dict(sys.modules, {module_name: module}):
+                    self.lobby_machine.visibleState = native_class()
+                    self.assertFalse(self.collector._garage_view_visible())
+
+    def test_queue_recovery_does_not_import_or_initialize_optional_mode_packages(self):
+        self.bind(LOBBY)
+        optional_modules = {name: None for name, _ in harness.QUEUE_STATE_TYPES
+                            if name != "gui.Scaleform.daapi.view.lobby.battle_queue.states"}
+        with patch.dict(sys.modules, optional_modules):
+            self.lobby_machine.visibleState = harness.CommonQueueState()
+            self.assertTrue(self.collector._garage_view_visible())
+            self.assertTrue(all(sys.modules[name] is None for name in optional_modules))
+
+    def test_queue_names_alone_and_unavailable_queue_api_cannot_expose_other_pages(self):
+        self.bind(LOBBY)
+        with patch.object(self.collector.panel, "ensure_visible") as ensure:
+            for name in ("battleQueue", "battleQueue.battleQueue", "StrongholdsBattleQueueState"):
+                self.lobby_machine.visibleState = types.SimpleNamespace(hangar=False, name=name)
+                self.collector._ensure_garage_widget(restore=True)
+            queue_module = "gui.Scaleform.daapi.view.lobby.battle_queue.states"
+            with patch.dict(sys.modules, {queue_module: None}):
+                self.lobby_machine.visibleState = harness.CommonQueueState()
+                self.collector._ensure_garage_widget(restore=True)
+                ensure.assert_not_called()
+                self.lobby_machine.visibleState = self.garage_state
+                self.collector._ensure_garage_widget(restore=True)
+                ensure.assert_called_once_with(restore=True)
 
     def test_tick_wallet_and_account_gui_cannot_restore_over_another_lobby_page(self):
         self.bind(LOBBY)

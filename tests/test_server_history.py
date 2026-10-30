@@ -104,7 +104,7 @@ class ServerHistoryTests(unittest.TestCase):
         self.assertFalse(server_reset_due(resumed, "NA", "101", TOMORROW, SECOND))
         self.assertEqual(resumed["account_goals"], selected["account_goals"])
 
-    def test_server_day_advance_resets_once_with_observed_balance_and_disables_goal(self):
+    def test_server_day_advance_resets_once_with_observed_balance_and_default_goal(self):
         selected = self.server()
         before = copy.deepcopy(selected)
         self.assertTrue(server_reset_due(selected, "NA", "101", TOMORROW, SECOND))
@@ -116,9 +116,9 @@ class ServerHistoryTests(unittest.TestCase):
         self.assertEqual(state["generation"], 4)
         self.assertEqual(state["server_cycle"], SECOND["cycle_start_utc"])
         self.assertEqual(reset["account_goals"]["NA:101"], {"schema": 2,
-            "mode": "balance_growth", "target": 0, "baseline": None,
-            "since_utc": None, "reset_generation": 5})
-        self.assertEqual(reset["credit_target"], 0)
+            "mode": "balance_growth", "target": 100000, "baseline": 25901536,
+            "since_utc": TOMORROW, "reset_generation": 5})
+        self.assertEqual(reset["credit_target"], 100000)
         self.assertFalse(server_reset_due(reset, "NA", "101", TOMORROW, SECOND))
         self.assertEqual(selected, before)
         self.assertEqual(reset["account_goals"]["EU:101"], before["account_goals"]["EU:101"])
@@ -169,14 +169,14 @@ class ServerHistoryTests(unittest.TestCase):
         self.assertFalse(receipt_visible({"id": "receipt-existing", "occurred_at": TOMORROW}, state))
         self.assertTrue(receipt_visible({"id": "receipt-new", "occurred_at": TOMORROW}, state))
 
-    def test_old_goal_cannot_resume_after_a_server_reset(self):
+    def test_editing_default_goal_after_server_reset_keeps_new_period_base(self):
         reset = reset_history_config(self.server(), "NA", "101", 25901536,
             TOMORROW, [], [], automatic=True, server_clock=SECOND)
         resumed = parse_goal_command("1000000", "balance_growth", reset,
             "2026-10-20T13:00:00Z", 26000000, "NA", "101")
         goal = resumed["account_goals"]["NA:101"]
-        self.assertEqual(goal["baseline"], 26000000)
-        self.assertEqual(goal["since_utc"], "2026-10-20T13:00:00Z")
+        self.assertEqual(goal["baseline"], 25901536)
+        self.assertEqual(goal["since_utc"], TOMORROW)
         self.assertEqual(goal["target"], 1000000)
         self.assertEqual(goal["reset_generation"], 5)
 
@@ -192,24 +192,39 @@ class ServerHistoryTests(unittest.TestCase):
                 TOMORROW, [], [], automatic=True, server_clock=SECOND)
         self.assertEqual(selected, before)
 
-    def test_explicit_manual_clear_also_disables_goal_and_ignores_preserve(self):
+    def test_explicit_manual_clear_starts_default_goal_and_ignores_preserve(self):
         manual = parse_history_settings({"mode": "manual", "preserve_goal": True},
             self.config, "NA", "101", NOW)
         reset = reset_history_config(manual, "NA", "101", 25901536, NOW,
             [], [], clear_goal=True)
         goal = reset["account_goals"]["NA:101"]
-        self.assertEqual(goal["target"], 0)
-        self.assertIsNone(goal["baseline"])
-        self.assertIsNone(goal["since_utc"])
+        self.assertEqual(goal["target"], 100000)
+        self.assertEqual(goal["baseline"], 25901536)
+        self.assertEqual(goal["since_utc"], NOW)
         self.assertEqual(goal["reset_generation"], 5)
 
-    def test_clearing_goal_creates_an_inactive_goal_if_missing(self):
+    def test_clearing_goal_creates_default_goal_if_missing_even_at_zero_balance(self):
         selected = parse_history_settings({"mode": "server"}, {}, "NA", "101", NOW, FIRST)
         reset = reset_history_config(selected, "NA", "101", 0,
             TOMORROW, [], [], automatic=True, server_clock=SECOND)
         self.assertEqual(reset["account_history"]["NA:101"]["baseline"], 0)
         self.assertEqual(reset["account_goals"]["NA:101"]["reset_generation"], 1)
-        self.assertEqual(reset["account_goals"]["NA:101"]["target"], 0)
+        self.assertEqual(reset["account_goals"]["NA:101"]["target"], 100000)
+        self.assertEqual(reset["account_goals"]["NA:101"]["baseline"], 0)
+        self.assertEqual(reset["account_goals"]["NA:101"]["since_utc"], TOMORROW)
+
+    def test_new_server_period_replaces_explicit_disabled_choice_with_default_goal(self):
+        selected = parse_goal_command("0", "balance_growth", self.server(),
+            NOW, 25901536, "NA", "101")
+        self.assertTrue(selected["account_goals"]["NA:101"]["disabled_by_user"])
+        reset = reset_history_config(selected, "NA", "101", 25901536,
+            TOMORROW, [], [], automatic=True, server_clock=SECOND)
+        goal = reset["account_goals"]["NA:101"]
+        self.assertEqual(goal["target"], 100000)
+        self.assertEqual(goal["baseline"], 25901536)
+        self.assertEqual(goal["since_utc"], TOMORROW)
+        self.assertNotIn("disabled_by_user", goal)
+        self.assertEqual(goal["reset_generation"], 5)
 
     def test_bad_goal_counter_and_nonboolean_clear_are_rejected_atomically(self):
         for counter in (True, -1, "4", 9007199254740991):

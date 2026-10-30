@@ -56,7 +56,7 @@ class HistoryRuntimeTests(unittest.TestCase):
         self.collector._sync_finance()
         self.collector.save_goal({"value": "3000000", "mode": "balance_growth"})
 
-    def test_manual_reset_starts_zero_then_counts_new_battles_and_rewards_exactly(self):
+    def test_manual_reset_starts_default_goal_then_counts_new_battles_and_rewards_exactly(self):
         with self.clock():
             self.synced_goal()
             self.capture(9001, OLD)
@@ -76,10 +76,10 @@ class HistoryRuntimeTests(unittest.TestCase):
             self.assertEqual(cleared["wallet"]["unclassified"], 0)
             self.assertFalse(cleared["history_control"]["preserve_goal"])
             self.assertEqual(cleared["goal"]["current"], 0)
-            self.assertEqual(cleared["goal"]["target"], 0)
-            self.assertIsNone(cleared["goal"]["baseline"])
-            self.assertFalse(cleared["goal"]["active"])
-            # A fresh goal is a deliberate action after clearing the history.
+            self.assertEqual(cleared["goal"]["target"], 100000)
+            self.assertEqual(cleared["goal"]["baseline"], self.balance)
+            self.assertTrue(cleared["goal"]["active"])
+            # Editing the default goal retains the fresh period's reference.
             self.collector.save_goal({"value": "3000000", "mode": "balance_growth"})
             self.assertEqual(self.collector.panel_payload()["goal"]["baseline"], self.balance)
             self.capture(9002, NOW)
@@ -242,21 +242,21 @@ class HistoryRuntimeTests(unittest.TestCase):
             self.collector.reset_history({"confirm": True})
             self.assertEqual(get_history_state(self.collector.config, "NA", "101")["baseline"], 0)
 
-    def test_default_reset_clears_saved_goal_for_explicit_reactivation(self):
+    def test_default_reset_starts_editable_100000_goal_from_current_balance(self):
         with self.clock():
             self.synced_goal()
             self.balance = BASE + 600000
             self.collector.reset_history({"confirm": True})
             goal = self.collector.panel_payload()["goal"]
-            self.assertEqual(goal["target"], 0)
-            self.assertIsNone(goal["baseline"])
+            self.assertEqual(goal["target"], 100000)
+            self.assertEqual(goal["baseline"], self.balance)
             self.assertEqual(goal["current"], 0)
             self.assertEqual(goal["progress_percent"], 0)
-            self.assertIsNone(goal["final_balance"])
-            self.assertFalse(goal["active"])
+            self.assertEqual(goal["final_balance"], self.balance + 100000)
+            self.assertTrue(goal["active"])
             saved_goal = read_json(self.collector.config_path)["account_goals"]["NA:101"]
-            self.assertIsNone(saved_goal["since_utc"])
-            self.assertEqual(saved_goal["target"], 0)
+            self.assertEqual(saved_goal["since_utc"], NOW)
+            self.assertEqual(saved_goal["target"], 100000)
             self.assertEqual(saved_goal["reset_generation"], 1)
 
     def test_manual_full_reset_ignores_legacy_preserve_goal_choice(self):
@@ -267,8 +267,8 @@ class HistoryRuntimeTests(unittest.TestCase):
             self.balance = BASE + 600000
             self.collector.reset_history({"confirm": True})
             self.assertEqual(self.collector.panel_payload()["goal"]["current"], 0)
-            self.assertIsNone(self.collector.config["account_goals"]["NA:101"]["baseline"])
-            self.assertEqual(self.collector.config["account_goals"]["NA:101"]["target"], 0)
+            self.assertEqual(self.collector.config["account_goals"]["NA:101"]["baseline"], self.balance)
+            self.assertEqual(self.collector.config["account_goals"]["NA:101"]["target"], 100000)
 
     def test_hidden_server_policy_rejects_removed_schedule_settings(self):
         with self.native_clock(NOW):
@@ -292,8 +292,9 @@ class HistoryRuntimeTests(unittest.TestCase):
             self.collector._wallet_changed()
             payload = self.collector.panel_payload()
             self.assertEqual(payload["summary"]["battle_count"], 0)
-            self.assertEqual(payload["goal"]["target"], 0)
-            self.assertFalse(payload["goal"]["active"])
+            self.assertEqual(payload["goal"]["target"], 100000)
+            self.assertTrue(payload["goal"]["active"])
+            self.assertEqual(payload["goal"]["baseline"], self.balance)
             self.capture(9002, "2026-10-18T10:00:00Z")
             self.balance += 51500
         with self.native_clock("2026-10-19T09:59:59Z"):

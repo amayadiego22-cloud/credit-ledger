@@ -148,7 +148,11 @@ class GoalCompletionRuntimeTests(unittest.TestCase):
         self.assertEqual(self.collector.panel_payload()["goal_completion"], new)
         self.collector.reset_history({"confirm": True})
         self.assertIsNone(self.collector.panel_payload()["goal_completion"])
-        self.assertEqual(self.collector.panel_payload()["goal"]["target"], 0)
+        fresh_goal = self.collector.panel_payload()["goal"]
+        self.assertEqual(fresh_goal["target"], 100000)
+        self.assertEqual(fresh_goal["baseline"], self.balance)
+        self.assertEqual(fresh_goal["current"], 0)
+        self.assertFalse(fresh_goal["complete"])
 
     def test_unsynced_balance_replay_and_foreign_account_never_expose_or_ack_event(self):
         pending = self.complete()
