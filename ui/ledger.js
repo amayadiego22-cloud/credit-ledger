@@ -91,10 +91,10 @@
         "Los importes marcados \u00abIncluido en partida\u00bb ya forman parte de sus ingresos.": "Amounts marked \u201cIncluded in battle\u201d are already included in battle earnings.",
         "Desplazar recompensas": "Scroll rewards",
         "Reiniciar el per\u00edodo actual": "Reset the current period",
-        "Deja las partidas, ganancias y gastos en 0 y desactiva la meta. Tu saldo de cuenta y los d\u00edas anteriores se conservan.": "Clear current battles, earnings and costs, and disable your goal. Your account balance and previous days are kept.",
+        "Deja las partidas, ganancias y gastos en 0 e inicia una meta editable de 100.000 cr\u00e9ditos. Tu saldo de cuenta y los d\u00edas anteriores se conservan.": "Clear current battles, earnings and costs, and start an editable 100,000-credit goal. Your account balance and previous days are kept.",
         "Reiniciar historial": "Reset battle history",
         "Empezar de nuevo": "Start over",
-        "El historial actual queda en 0 y la meta se desactiva. Tu saldo y los d\u00edas anteriores se conservan.": "Current battle history will be cleared and your goal disabled. Your balance and previous days are kept.",
+        "El historial actual queda en 0 y comienza una meta editable de 100.000 cr\u00e9ditos. Tu saldo y los d\u00edas anteriores se conservan.": "Current battle history will be cleared and an editable 100,000-credit goal will start. Your balance and previous days are kept.",
         "Confirmar reinicio": "Confirm reset",
         "Cancelar": "Cancel",
         "Historial por d\u00eda": "Daily battle history",
@@ -148,9 +148,9 @@
         "No se pudo filtrar el veh\u00edculo. Puedes reintentar.": "Could not load this vehicle's battles. You can retry.",
         "Cargando la lista de partidas. Los importes del veh\u00edculo ya est\u00e1n disponibles.": "Loading the battle list. Vehicle earnings are already available.",
         "Reiniciando historial...": "Resetting battle history...",
-        "El historial actual queda en 0 y la meta se desactiva. Puedes escribir una nueva desde tu saldo actual. Tu saldo y los d\u00edas anteriores se conservan.": "Current history will be cleared and your goal disabled. You can start a new goal from your current balance. Your balance and previous days are kept.",
+        "El historial actual queda en 0 y comienza una meta de 100.000 cr\u00e9ditos desde tu saldo actual. Puedes cambiar la cantidad. Tu saldo y los d\u00edas anteriores se conservan.": "Current history will be cleared and a 100,000-credit goal will start from your current balance. You can change the amount. Your balance and previous days are kept.",
         "Historial reiniciado.": "Battle history reset.",
-        "Nuevo historial. Puedes iniciar una meta desde tu saldo actual.": "New tracking period. You can start a goal from your current balance.",
+        "Nuevo historial. Meta actualizada desde tu saldo actual; puedes cambiar la cantidad.": "New tracking period. Your goal has been updated from your current balance; you can change the amount.",
         "No se reinici\u00f3 el historial. Puedes volver a intentarlo.": "Battle history could not be reset. You can try again.",
         "El juego no proporcion\u00f3 el detalle de reservas de estas partidas. Sus cr\u00e9ditos ya est\u00e1n incluidos en los ingresos brutos.": "The game did not provide reserve details for these battles. Those credits are already included in gross earnings.",
         "El detalle de reservas aparecer\u00e1 si el juego lo proporciona. Los ingresos y gastos se actualizan por separado.": "Reserve details will appear if provided by the game. Earnings and costs update independently.",
@@ -1529,13 +1529,13 @@
         disable(nodes['history-reset'], !available || !control || control.can_reset !== true || pending);
         setText(nodes['history-reset'], state.historyPendingReset ? t('Reiniciando...') : t('Reiniciar historial'));
         show(nodes['history-confirmation'], state.historyConfirm);
-        setText(nodes['history-confirm-note'], t('El historial actual queda en 0 y la meta se desactiva. Puedes escribir una nueva desde tu saldo actual. Tu saldo y los días anteriores se conservan.'));
+        setText(nodes['history-confirm-note'], t('El historial actual queda en 0 y comienza una meta de 100.000 créditos desde tu saldo actual. Puedes cambiar la cantidad. Tu saldo y los días anteriores se conservan.'));
         disable(nodes['history-confirm'], !available || !control || control.can_reset !== true || pending);
         disable(nodes['history-cancel'], state.historyPendingReset);
         queueLayout();
     }
     function acceptHistoryControl(payload) {
-        var incoming = historySettings(payload), changed;
+        var incoming = historySettings(payload), changed, incomingTarget;
         if (!incoming) { return; }
         changed = state.historyGeneration !== null && state.historyGeneration !== incoming.generation;
         state.historySaved = incoming; state.historyGeneration = incoming.generation;
@@ -1545,11 +1545,12 @@
             state.historyFeedback = t('Historial reiniciado.'); state.selected = null;
             state.modeFilter = 'all'; setModePicker(false); clearVehicleFilter(); setPicker(false);
             nodes['history-options'].scrollTop = 0;
-            if (payload.goal && number(payload.goal.target) === 0) {
-                state.draftDigits = '0'; state.savedDigits = '0'; state.draftMode = 'balance_growth'; state.savedMode = 'balance_growth';
+            incomingTarget = payload.goal ? number(payload.goal.target) : null;
+            if (incomingTarget !== null && incomingTarget >= 0 && Math.floor(incomingTarget) === incomingTarget && incomingTarget <= 9007199254740991) {
+                state.draftDigits = digitsOfNumber(incomingTarget); state.savedDigits = state.draftDigits; state.draftMode = 'balance_growth'; state.savedMode = 'balance_growth';
                 state.dirty = false; state.pendingSave = false; state.pendingGoalReset = null;
-                state.invalid = ''; state.rejectedRaw = null; state.feedback = t('Nuevo historial. Puedes iniciar una meta desde tu saldo actual.');
-                nodes.target.value = '0';
+                state.invalid = ''; state.rejectedRaw = null; state.feedback = t('Nuevo historial. Meta actualizada desde tu saldo actual; puedes cambiar la cantidad.');
+                nodes.target.value = groupDigits(state.draftDigits);
             }
         } else if (state.historyPendingReset && payload.error) {
             state.historyPendingReset = false; state.historyFeedback = t('No se reinició el historial. Puedes volver a intentarlo.');
