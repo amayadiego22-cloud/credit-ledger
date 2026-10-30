@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 from capture.compatibility import SUPPORTED_REALMS, SUPPORTED_CLIENTS, supported_realm
 
-VERSION = "0.22.11"
+VERSION = "0.22.14"
 CLIENT = "2.4.1.1"
 PACKAGE = "local.credit_ledger.%s.wotmod" % VERSION
 COMPARED_BATTLE_NET = -113508
@@ -24,7 +24,7 @@ def validation_metadata():
             "minimized_size_px": [184, 144],
             "circle_size_px": [112, 112],
             "initial_goal_new_accounts": 100000,
-            "saved_goals_including_zero_preserved": True,
+            "saved_progress_and_explicitly_disabled_goals_preserved": True,
             "hover_move_handle": True,
             "green_ring_stroke_px": 8,
             "green_progress_bar_px": 12,
@@ -53,10 +53,36 @@ def validation_metadata():
             "installer_checks_passed": 32,
             "real_client_visual_check_pending": True,
         },
+        "default_goal_each_period": {
+            "target": 100000,
+            "new_accounts_and_reset_periods": True,
+            "empty_legacy_zero_migration": True,
+            "positive_saved_goals_and_progress_preserved": True,
+            "explicit_zero_disables_until_next_period": True,
+            "python_tests_passed": 447,
+            "browser_layout_checks_passed": 120,
+            "real_client_visual_check_pending": True,
+        },
+        "matchmaking_visibility": {
+            "native_queue_classes": ["CommonBattleQueueState", "StrongholdsBattleQueueState",
+                                     "HalloweenPreBattleQueueState", "LastStandPreBattleQueueState",
+                                     "MapsTrainingQueueState", "BattleRoyaleTournamentQueueState"],
+            "inactive_event_modules_imported": False,
+            "loaded_native_class_identity_checked": True,
+            "native_source": "LobbyStateMachine.visibleState",
+            "queue_subclasses_supported": True,
+            "cancel_keeps_goal_history_position_and_view_mode": True,
+            "battle_loading_and_other_pages_hidden": True,
+            "python_tests_passed": 450,
+            "six_queue_classes_and_story_hangar_route_verified": True,
+            "contracts_identical_regions": ["NA", "EU", "ASIA"],
+            "real_client_visual_check_pending": True,
+        },
         "garage_only_visibility": {
             "native_source": "LobbyStateMachine.visibleState + isHangarState",
             "native_event": "onVisibleRouteChanged",
             "unknown_loading_or_other_routes_hidden": True,
+            "native_matchmaking_queue_routes_allowed": True,
             "returns_automatically_to_garage": True,
             "legacy_and_mode_specific_hangar_flags_supported": True,
             "deferred_window_ready_guard": True,
@@ -380,7 +406,7 @@ def validation_metadata():
             "server_clock": "helpers.time_utils.getServerUTCTime_after_own_Account_showGUI",
             "stable_utc_day_window": True,
             "server_cycle_not_disconnect_or_maintenance_detection": True,
-            "server_and_manual_reset_clear_goal_target_base_and_start": True,
+            "server_and_manual_reset_start_editable_100000_goal_from_current_balance": True,
             "goal_requires_explicit_new_activation": True,
             "first_native_cycle_arms_without_reset": True,
             "old_schedule_choices_migrate_without_immediate_reset": True,
@@ -416,7 +442,7 @@ def write_metadata(path):
     root = ET.Element("root")
     for name, value in (
         ("id", "local.credit_ledger"),
-        ("version", "0.22.11"),
+        ("version", "0.22.14"),
         ("name", "Credit Ledger / Contabilidad de creditos"),
         ("description", "Contabilidad local de creditos para WoT 2.4.1.1 NA/EU/ASIA: "
          "ingresos, gastos, historial de partidas y metas de ahorro."),
