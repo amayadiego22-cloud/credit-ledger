@@ -955,8 +955,11 @@ function installQaArt(nativePreviewArt){
         assert.strictEqual(await page.evaluate(()=>window.__calls.length),beforeHistoryCalls);
         checks.push('History settings expose only the explicit reset action, with no schedule/local-hour/preserve controls; previous days are collapsed and no hidden save command mutates a goal draft');
         const beforeResetCalls=await page.evaluate(()=>window.__calls.length);
+        const manualResetBalance=await page.evaluate(()=>JSON.parse(window.model.payload).balance);
+        const manualResetBalanceText=manualResetBalance.toLocaleString('de-DE');
         await page.locator('#lc-history-reset').click();
         assert.strictEqual(await page.locator('#lc-history-confirmation').isVisible(),true);
+        assert((await page.locator('#lc-history-confirm-note').textContent()).includes('100.000 créditos'));
         assert.strictEqual(await page.evaluate(()=>window.__calls.length),beforeResetCalls);
         await page.keyboard.press('Escape');
         assert.strictEqual(await page.locator('#lc-history-confirmation').isVisible(),false);
@@ -976,7 +979,7 @@ function installQaArt(nativePreviewArt){
             const payload=JSON.parse(window.model.payload);
             payload.summary={battle_count:0,gross_credits:0,expenses:{repair:0,ammo:0,consumables:0,other:0},net_credits:0,average_net_credits:null,pending_battles:0};
             payload.history=[];payload.rewards=[];
-            payload.goal={mode:'balance_growth',target:0,active:false,baseline:null,since_utc:null,since_label:'',current:0,remaining:0,progress_percent:0,complete:false,reset_generation:1};
+            payload.goal={mode:'balance_growth',target:100000,active:true,baseline:payload.balance,final_balance:payload.balance+100000,since_utc:'2026-10-18T12:00:00Z',since_label:'18/10/2026 17:30 (hora local, UTC+05:30)',current:0,remaining:100000,progress_percent:0,complete:false,reset_generation:1};
             Object.assign(payload.history_control,{generation:1,since_utc:'2026-10-18T12:00:00Z',since_label:'18/10/2026 17:30 (hora local, UTC+05:30)'});
             window.model.payload=JSON.stringify(payload);window.__handlers['viewEnv.onDataChanged']();
         });
@@ -985,15 +988,15 @@ function installQaArt(nativePreviewArt){
         assert.strictEqual(await page.locator('#lc-history-label').textContent(),'Todas las partidas');
         assert.strictEqual(await page.locator('#lc-battle-count').textContent(),'0 partidas registradas');
         assert.strictEqual(await page.locator('#lc-net-total').textContent(),'+0');
-        assert.strictEqual(await page.locator('#lc-goal-base').textContent(),'\u2014');
+        assert.strictEqual(await page.locator('#lc-goal-base').textContent(),manualResetBalanceText);
         assert.strictEqual(await page.locator('#lc-gross').textContent(),'+0');
         assert.strictEqual(await page.locator('#lc-repair').textContent(),'0');
         assert.strictEqual(await page.locator('#lc-ammo').textContent(),'0');
         assert.strictEqual(await page.locator('#lc-consumables').textContent(),'0');
         assert.strictEqual(await page.locator('#lc-detail-net').textContent(),'+0');
         assert.strictEqual(await page.locator('#lc-history-settings-status').textContent(),'Historial reiniciado.');
-        assert.strictEqual(await target.inputValue(),'0');
-        assert.strictEqual(await page.locator('#lc-progress-text').textContent(),'Sin meta activa');
+        assert.strictEqual(await target.inputValue(),'100.000');
+        assert.strictEqual(await page.locator('#lc-progress-text').textContent(),'0 / 100.000');
         assert.strictEqual(await page.evaluate(()=>window.__calls.length),beforeResetCalls+1);
         await page.evaluate(function(){
             const payload=JSON.parse(window.model.payload);payload.ready=false;
@@ -1004,35 +1007,46 @@ function installQaArt(nativePreviewArt){
             const payload=JSON.parse(window.model.payload);payload.ready=true;payload.summary.battle_count=null;
             window.model.payload=JSON.stringify(payload);window.__handlers['viewEnv.onDataChanged']();
         });
-        assert.strictEqual(await page.locator('#lc-goal-base').textContent(),'\u2014');
+        assert.strictEqual(await page.locator('#lc-goal-base').textContent(),manualResetBalanceText);
         await page.evaluate(function(){
             const payload=JSON.parse(window.model.payload);payload.summary.battle_count=0;
             window.model.payload=JSON.stringify(payload);window.__handlers['viewEnv.onDataChanged']();
         });
-        assert.strictEqual(await page.locator('#lc-goal-base').textContent(),'\u2014');
-        checks.push('Manual reset requires confirmation, clears old goal draft and deactivates the goal; Cancel/Escape send no reset, duplicate guards hold and generation acknowledgement clears counts, selection and picker');
+        assert.strictEqual(await page.locator('#lc-goal-base').textContent(),manualResetBalanceText);
+        checks.push('Manual reset requires confirmation, replaces the old goal draft with the editable100000-credit goal and current balance; Cancel/Escape send no reset, duplicate guards hold and generation acknowledgement clears counts, selection and picker');
         const beforeServerPayload=await page.evaluate(()=>JSON.parse(window.model.payload));
         const beforeServerCalls=await page.evaluate(()=>window.__calls.length);
         await target.fill('7654321');
         await page.evaluate(function(){
             const payload=JSON.parse(window.model.payload);
             payload.balance=25901536;
-            payload.goal={mode:'balance_growth',target:0,active:false,baseline:null,since_utc:null,since_label:'',current:0,remaining:0,progress_percent:0,complete:false,reset_generation:2};
+            payload.goal={mode:'balance_growth',target:100000,active:true,baseline:payload.balance,final_balance:payload.balance+100000,since_utc:'2026-10-20T10:00:00Z',since_label:'20/10/2026 05:00 (hora local, UTC-05:00)',current:0,remaining:100000,progress_percent:0,complete:false,reset_generation:2};
             payload.summary={battle_count:0,gross_credits:0,expenses:{repair:0,ammo:0,consumables:0,other:0},net_credits:0,average_net_credits:null,pending_battles:0};
             payload.history=[];payload.rewards=[];
             Object.assign(payload.history_control,{generation:2,since_label:'20/10/2026 05:00 (hora local, UTC-05:00)',server_cycle:'2026-10-20T10:00:00Z',next_reset_label:'21/10/2026 05:00 (hora local, UTC-05:00)'});
             window.model.payload=JSON.stringify(payload);window.__handlers['viewEnv.onDataChanged']();
         });
-        assert.strictEqual(await target.inputValue(),'0');
+        assert.strictEqual(await target.inputValue(),'100.000');
         assert.strictEqual(await page.locator('#lc-save-goal').isVisible(),true);
-        assert.strictEqual(await page.locator('#lc-progress-text').textContent(),'Sin meta activa');
-        assert.strictEqual(await page.locator('#lc-goal-base').textContent(),'\u2014');
+        assert.strictEqual(await page.locator('#lc-progress-text').textContent(),'0 / 100.000');
+        assert.strictEqual(await page.locator('#lc-goal-base').textContent(),'25.901.536');
         assert.strictEqual(await page.locator('#lc-balance').textContent(),'25.901.536');
         assert.strictEqual(await page.locator('#lc-net-total').textContent(),'+0');
         assert.strictEqual(await page.locator('#lc-battle-count').textContent(),'0 partidas registradas');
         assert.strictEqual(await page.locator('.lc-history-battle').count(),0);
         assert.strictEqual(await page.evaluate(()=>window.__calls.length),beforeServerCalls,'Server-day rollover must not send a client reset command');
-        checks.push('Acknowledged new server day clears stale unsaved goal text to zero, shows an inactive goal and zero period results while preserving current account balance without issuing a native mutation');
+        checks.push('Acknowledged new server day replaces stale unsaved goal text with100000 credits at0percent and zero period results while preserving current account balance without issuing a native mutation');
+        await target.fill('9876543');
+        await page.evaluate(function(){
+            const payload=JSON.parse(window.model.payload);
+            payload.goal={mode:'balance_growth',target:0,active:false,baseline:null,since_utc:null,since_label:'',current:0,remaining:0,progress_percent:0,complete:false,reset_generation:3};
+            payload.history_control.generation=3;
+            window.model.payload=JSON.stringify(payload);window.__handlers['viewEnv.onDataChanged']();
+        });
+        assert.strictEqual(await target.inputValue(),'0');
+        assert.strictEqual(await page.locator('#lc-progress-text').textContent(),'Sin meta activa');
+        assert.strictEqual(await page.evaluate(()=>window.__calls.length),beforeServerCalls);
+        checks.push('A legacy zero-target period acknowledgement still clears a stale draft without inventing a positive goal or sending a mutation');
         await page.evaluate(function(payload){window.model.payload=JSON.stringify(payload);window.__handlers['viewEnv.onDataChanged']();},beforeServerPayload);
         await page.setViewportSize({width:1100,height:850});
         await page.evaluate(function(){
