@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -36,6 +37,13 @@ internal static class InstallerTests
     }
     static void Test(string name, Action test) { test(); passed++; Console.WriteLine("PASS " + name); }
     static InstallerEngine Engine() { return new InstallerEngine(Path.Combine(suite, "backups")) { IsRunning = () => false }; }
+    static void AssertProgress(List<int> values, bool complete)
+    {
+        Assert(values.Count > 0 && values[0] == 0, "progress begins at zero");
+        Assert(values.All(p => p >= 0 && p <= 100), "progress stays within bounds");
+        for (int i = 1; i < values.Count; i++) Assert(values[i] > values[i - 1], "progress advances monotonically");
+        Assert(complete ? values.Last() == 100 : !values.Contains(100), "completion matches operation result");
+    }
     static void Main(string[] args)
     {
         suite = Path.GetFullPath(args[0]); Directory.CreateDirectory(suite);
@@ -109,11 +117,162 @@ internal static class InstallerTests
             DateTime before = File.GetLastWriteTimeUtc(Target(root)); var result = engine.Apply(root, false, p => { });
             Assert(File.GetLastWriteTimeUtc(Target(root)) == before && result.Backup == null, "idempotent");
         });
-        Test("preserves wallet, goals, history and other version folders", () =>
+        foreach (string activeValue in new[] { "2.4.1.0", "2.4.1.1" })
+        {
+            string active = activeValue;
+            Test("one current copy, older clients cleaned, future clients kept for " + active, () =>
+            {
+                string root = Fixture("EU", active, "active cleanup " + active);
+                string dir = Path.GetDirectoryName(Target(root));
+                File.WriteAllBytes(Target(root), InstallerEngine.Payload());
+                string old = Path.Combine(dir, "previous", "renamed old package.wotmod");
+                string same = Path.Combine(dir, "copy of current.wotmod");
+                string disabled = Path.Combine(dir, "local.credit_ledger.0.3.0-beta.wotmod.disabled");
+                Package(old, InstallerEngine.ModId, "0.17.0");
+                File.WriteAllBytes(same, InstallerEngine.Payload());
+                Package(disabled, InstallerEngine.ModId, "0.3.0");
+                string foreign = Path.Combine(dir, "credit_ledger_unrelated.wotmod.disabled");
+                Package(foreign, "another.mod", "1.0");
+                string inactiveVersion = active == "2.4.1.0" ? "2.4.1.1" : "2.4.1.0";
+                string inactive = Path.Combine(root, "mods", inactiveVersion, "old credit ledger.wotmod");
+                string inactiveDisabled = inactive + ".disabled";
+                Package(inactive, InstallerEngine.ModId, "0.22.6");
+                Package(inactiveDisabled, InstallerEngine.ModId, "0.3.0");
+                bool isOlder = new Version(inactiveVersion) < new Version(active);
+                var protectedFiles = (isOlder ? new[] { foreign } : new[] { foreign, inactive, inactiveDisabled }).ToDictionary(path => path, path => File.ReadAllBytes(path));
+                var values = new List<int>();
+                var result = Engine().Apply(root, false, p => values.Add(p));
+                Assert(!File.Exists(old) && !File.Exists(same) && !File.Exists(disabled), "old, identical and disabled copies removed");
+                Assert(InstallerEngine.Hash(File.ReadAllBytes(Target(root))) == InstallerEngine.PayloadHash, "current payload is the remaining copy");
+                int expectedBackups = isOlder ? 6 : 4;
+                Assert(result.PreviousFiles == expectedBackups && Directory.GetFiles(result.Backup, "*.wotmod").Length == expectedBackups, "all previous copies backed up outside game");
+                foreach (var preserved in protectedFiles) Assert(preserved.Value.SequenceEqual(File.ReadAllBytes(preserved.Key)), "future client and foreign package preserved");
+                if (isOlder) Assert(!Directory.Exists(Path.GetDirectoryName(inactive)), "empty older version folder removed");
+                Assert(Directory.GetFiles(dir, "*.wotmod*", SearchOption.AllDirectories).Length == 2, "one owned copy plus preserved foreign package");
+                AssertProgress(values, true);
+            });
+        }
+        Test("unexpected duplicate during cleanup prevents success and restores originals", () =>
+        {
+            string root = Fixture("NA", "2.4.1.1", "new duplicate");
+            Package(Target(root), InstallerEngine.ModId, "0.22.6");
+            byte[] before = File.ReadAllBytes(Target(root));
+            string external = Path.Combine(Path.GetDirectoryName(Target(root)), "external copy.wotmod.disabled");
+            var engine = Engine(); var values = new List<int>();
+            engine.BeforeCommit = stage => { if (stage == "cleanup") Package(external, InstallerEngine.ModId, "0.22.5"); };
+            Reject(() => engine.Apply(root, false, p => values.Add(p)), "changed_files");
+            Assert(!values.Contains(100), "duplicate cannot report success");
+            Assert(before.SequenceEqual(File.ReadAllBytes(Target(root))), "original restored");
+            Assert(File.Exists(external), "concurrent file not removed without prior backup");
+        });
+        Test("already current installation still removes an empty older client folder", () =>
+        {
+            string root = Fixture("NA", "2.4.1.1", "empty old client");
+            File.WriteAllBytes(Target(root), InstallerEngine.Payload());
+            string oldDirectory = Path.Combine(root, "mods", "2.4.1.0"); Directory.CreateDirectory(oldDirectory);
+            Engine().Apply(root, false, p => { });
+            Assert(!Directory.Exists(oldDirectory), "old empty folder removed despite current payload");
+            Assert(Directory.Exists(Path.GetDirectoryName(Target(root))) && InstallerEngine.Hash(File.ReadAllBytes(Target(root))) == InstallerEngine.PayloadHash, "active client retained");
+        });
+        Test("old nested copies removed while foreign files, configs and future clients stay", () =>
+        {
+            string root = Fixture("ASIA", "2.4.1.1", "mixed older clients");
+            string mixedRoot = Path.Combine(root, "mods", "2.4.1.0");
+            string mixedOwn = Path.Combine(mixedRoot, "nested", "old.wotmod.disabled");
+            string foreign = Path.Combine(mixedRoot, "other.wotmod");
+            string readme = Path.Combine(mixedRoot, "notes.txt");
+            Package(mixedOwn, InstallerEngine.ModId, "0.20.0");
+            Package(foreign, "another.mod", "1.0"); File.WriteAllText(readme, "keep this file");
+            string oldRoot = Path.Combine(root, "mods", "1.9.0.0");
+            string oldOwn = Path.Combine(oldRoot, "deep", "nested", "renamed.wotmod");
+            Package(oldOwn, InstallerEngine.ModId, "0.17.0");
+            string future = Path.Combine(root, "mods", "2.4.1.2", "next.wotmod");
+            string config = Path.Combine(root, "mods", "configs", "credit_ledger", "saved.wotmod");
+            string nonVersion = Path.Combine(root, "mods", "2.4.1.0-backup", "saved.wotmod");
+            foreach (string path in new[] { future, config, nonVersion }) Package(path, InstallerEngine.ModId, "0.22.6");
+            var preserved = new[] { foreign, readme, future, config, nonVersion }.ToDictionary(path => path, path => File.ReadAllBytes(path));
+            var result = Engine().Apply(root, false, p => { });
+            Assert(!File.Exists(mixedOwn) && !Directory.Exists(Path.GetDirectoryName(mixedOwn)), "empty owned subfolder removed");
+            Assert(Directory.Exists(mixedRoot) && !Directory.Exists(oldRoot), "mixed old root retained, fully empty old tree removed");
+            foreach (var item in preserved) Assert(item.Value.SequenceEqual(File.ReadAllBytes(item.Key)), "unrelated content preserved");
+            string map = File.ReadAllText(Path.Combine(result.Backup, "restore-map.txt"));
+            Assert(result.PreviousFiles == 2 && map.Contains(mixedOwn) && map.Contains(oldOwn), "old client files included in backup map");
+        });
+        Test("failure after removing old folders restores their tree and files", () =>
+        {
+            string root = Fixture("EU", "2.4.1.1", "old folder rollback");
+            string oldRoot = Path.Combine(root, "mods", "2.4.1.0");
+            string oldOwn = Path.Combine(oldRoot, "deep", "previous.wotmod");
+            string disabled = Path.Combine(oldRoot, "previous.wotmod.disabled");
+            string emptyRoot = Path.Combine(root, "mods", "2.3.0.0"); Directory.CreateDirectory(emptyRoot);
+            Package(Target(root), InstallerEngine.ModId, "0.22.6");
+            Package(oldOwn, InstallerEngine.ModId, "0.20.0"); Package(disabled, InstallerEngine.ModId, "0.17.0");
+            var originals = new[] { Target(root), oldOwn, disabled }.ToDictionary(path => path, path => File.ReadAllBytes(path));
+            bool rejected = false;
+            try { Engine().Apply(root, false, p => { if (p == 100) { Assert(!Directory.Exists(oldRoot) && !Directory.Exists(emptyRoot), "folders removed before completion"); throw new IOException("synthetic final failure"); } }); }
+            catch (IOException) { rejected = true; }
+            Assert(rejected && Directory.Exists(emptyRoot), "failure restores even an originally empty folder");
+            foreach (var item in originals) Assert(item.Value.SequenceEqual(File.ReadAllBytes(item.Key)), "all files restored with their parent folders");
+        });
+        Test("concurrent change in old client file is preserved", () =>
+        {
+            string root = Fixture("NA", "2.4.1.1", "old client concurrent");
+            string old = Path.Combine(root, "mods", "2.4.1.0", "old.wotmod");
+            Package(Target(root), InstallerEngine.ModId, "0.22.6"); Package(old, InstallerEngine.ModId, "0.20.0");
+            byte[] currentBefore = File.ReadAllBytes(Target(root));
+            var engine = Engine(); engine.BeforeCommit = stage => { if (stage == "cleanup") File.WriteAllText(old, "external change"); };
+            Reject(() => engine.Apply(root, false, p => { }), "changed_files");
+            Assert(File.ReadAllText(old) == "external change", "unbacked external change not deleted");
+            Assert(currentBefore.SequenceEqual(File.ReadAllBytes(Target(root))), "active original restored");
+        });
+        foreach (string scenarioValue in new[] { "fresh", "update", "remove", "repeat" })
+        {
+            string scenario = scenarioValue;
+            Test("verified progress for " + scenario, () =>
+            {
+                string root = Fixture("NA", "2.4.1.1", "progress " + scenario);
+                if (scenario == "update") Package(Target(root), InstallerEngine.ModId, "0.22.6");
+                if (scenario == "remove" || scenario == "repeat") Engine().Apply(root, false, p => { });
+                var values = new List<int>();
+                Engine().Apply(root, scenario == "remove", p =>
+                {
+                    values.Add(p);
+                    if (p == 100)
+                    {
+                        Assert(scenario == "remove" ? !File.Exists(Target(root)) :
+                            InstallerEngine.Hash(File.ReadAllBytes(Target(root))) == InstallerEngine.PayloadHash,
+                            "100 follows verified final files");
+                    }
+                });
+                AssertProgress(values, true);
+                Assert(values.SequenceEqual(scenario == "repeat" ? new[] { 0, 10, 20, 100 } :
+                    new[] { 0, 10, 20, 35, 55, 75, 90, 100 }), "real operation milestones");
+            });
+        }
+        Test("failed operations never report completion", () =>
+        {
+            foreach (string failure in new[] { "validation", "staged", "cleanup" })
+            {
+                string root = Fixture("NA", "2.4.1.1", "progress failure " + failure);
+                Package(Target(root), InstallerEngine.ModId, "0.22.6");
+                byte[] before = File.ReadAllBytes(Target(root));
+                var engine = Engine(); var values = new List<int>();
+                engine.IsRunning = () => failure == "validation";
+                engine.BeforeCommit = stage => { if (stage == failure) throw new IOException("synthetic progress failure"); };
+                bool rejected = false;
+                try { engine.Apply(root, false, p => values.Add(p)); }
+                catch (SetupError) { rejected = true; }
+                catch (IOException) { rejected = true; }
+                Assert(rejected, "failure rejected");
+                AssertProgress(values, false);
+                Assert(before.SequenceEqual(File.ReadAllBytes(Target(root))), "failure preserves original files");
+            }
+        });
+        Test("preserves wallet, goals, history and future version folders", () =>
         {
             string root = Fixture("NA", "2.4.1.1", "data"); string data = Path.Combine(root, "mods", "configs", "credit_ledger"); Directory.CreateDirectory(data);
             foreach (string f in new[] { "wallet.json", "ledger.json", "config.json" }) File.WriteAllText(Path.Combine(data, f), "USER DATA " + f);
-            string inactive = Path.Combine(root, "mods", "2.4.1.0", InstallerEngine.FileName); Package(inactive, InstallerEngine.ModId, "0.22.6"); byte[] before = File.ReadAllBytes(inactive);
+            string inactive = Path.Combine(root, "mods", "2.4.2.0", InstallerEngine.FileName); Package(inactive, InstallerEngine.ModId, "0.22.6"); byte[] before = File.ReadAllBytes(inactive);
             Engine().Apply(root, false, p => { }); Engine().Apply(root, true, p => { });
             foreach (string f in Directory.GetFiles(data)) Assert(File.ReadAllText(f) == "USER DATA " + Path.GetFileName(f), "data preserved");
             Assert(before.SequenceEqual(File.ReadAllBytes(inactive)), "inactive preserved");
