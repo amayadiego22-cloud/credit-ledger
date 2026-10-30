@@ -5,6 +5,7 @@ import copy
 import datetime
 import re
 from .wallet import exact_amount
+from .goal_defaults import DEFAULT_CREDIT_TARGET
 from .history import get_history_state, record_visible, receipt_visible
 from .local_clock import time_label, timezone_label
 from .battle_modes import battle_mode_payload, battle_mode_icon
@@ -21,24 +22,26 @@ def account_key(region, account_id):
     return region + ":" + str(account_id)
 
 
-DEFAULT_CREDIT_TARGET = 100000
-
-
 def ensure_balance_goal(previous, region, account_id, balance, now):
-    """Start a new account once; saved and deliberately disabled goals survive."""
+    """Initialize a new/empty period while preserving progress and explicit 0."""
     key = account_key(region, account_id)
     saved = previous.get("account_goals", {}).get(key, {})
-    if saved.get("schema") == 2 or exact_amount(balance) is None or balance < 0:
+    legacy_empty = (exact_amount(saved.get("target")) == 0 and
+                    saved.get("baseline") is None and saved.get("since_utc") is None and
+                    saved.get("disabled_by_user") is not True)
+    if saved.get("schema") == 2 and not legacy_empty:
         return None
-    first_use = key not in previous.get("account_goals", {})
-    target = DEFAULT_CREDIT_TARGET if first_use else 0
-    if first_use and (not _valid_goal_time(now) or balance + target > 9007199254740991):
+    generation = exact_amount(saved.get("reset_generation", 0))
+    if (exact_amount(balance) is None or balance < 0 or generation is None or generation < 0 or
+            not _valid_goal_time(now) or balance + DEFAULT_CREDIT_TARGET > 9007199254740991):
         return None
     updated = copy.deepcopy(previous)
-    updated.setdefault("account_goals", {})[key] = {
-        "schema": 2, "mode": "balance_growth", "target": target,
-        "baseline": balance if first_use else None, "since_utc": now if first_use else None}
-    updated["credit_target"] = target
+    goal = {"schema": 2, "mode": "balance_growth", "target": DEFAULT_CREDIT_TARGET,
+            "baseline": balance, "since_utc": now}
+    if "reset_generation" in saved:
+        goal["reset_generation"] = generation
+    updated.setdefault("account_goals", {})[key] = goal
+    updated["credit_target"] = DEFAULT_CREDIT_TARGET
     return updated
 
 
@@ -100,6 +103,10 @@ def parse_goal_command(value, mode, previous, now_utc, balance=None, region=None
     updated = copy.deepcopy(previous)
     goal = updated.setdefault("account_goals", {}).setdefault(key, {})
     goal["target"] = amount
+    if amount == 0:
+        goal["disabled_by_user"] = True
+    else:
+        goal.pop("disabled_by_user", None)
     if first_start:
         goal.update(schema=2, mode="balance_growth", baseline=base,
                     since_utc=since, reset_generation=generation)
@@ -127,6 +134,7 @@ def parse_reset_goal_command(value, mode, previous, now_utc, balance=None,
         raise ValueError(u"El contador de reinicios de la meta supera el l\u00edmite admitido.")
     updated = copy.deepcopy(previous)
     goal = updated.setdefault("account_goals", {}).setdefault(key, {})
+    goal.pop("disabled_by_user", None)
     goal.update(schema=2, mode="balance_growth", target=amount, baseline=balance,
                 since_utc=now_utc, reset_generation=generation + 1)
     updated["credit_target"] = amount

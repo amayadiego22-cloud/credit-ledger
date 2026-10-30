@@ -4,6 +4,7 @@ import copy
 import datetime
 
 from .wallet import exact_amount, integer_types, string_types, text_type
+from .goal_defaults import DEFAULT_CREDIT_TARGET
 from .local_clock import daily_boundary_utc, next_daily_reset_utc
 
 
@@ -232,7 +233,7 @@ def parse_history_settings(args, previous, region, account_id, now_utc, server_c
                 state.get("server_cycle") is None):
             state["server_cycle"] = native["cycle_start_utc"] if native else None
         state["clock"] = SERVER_CLOCK
-        # A new server day always starts without an active credit goal.
+        # A new server day starts a fresh default goal rather than old progress.
         preserve = False
     state.update(mode=mode, hour=hour, preserve_goal=preserve, settings_schema=1)
     updated, key = _updated_account(previous, region, account_id)
@@ -302,10 +303,13 @@ def reset_history_config(previous, region, account_id, balance, now_utc,
             updated["account_goals"] = goals
         elif "account_goals" not in updated:
             updated["account_goals"] = goals
-        goals[key] = {"schema": 2, "mode": "balance_growth", "target": 0,
-                      "baseline": None, "since_utc": None,
+        # At the numeric limit, keep accounting usable and wait for a balance
+        # that can represent the whole default goal before activating it.
+        target = DEFAULT_CREDIT_TARGET if amount + DEFAULT_CREDIT_TARGET <= 9007199254740991 else 0
+        goals[key] = {"schema": 2, "mode": "balance_growth", "target": target,
+                      "baseline": amount if target else None, "since_utc": now_utc if target else None,
                       "reset_generation": generation + 1}
-        updated["credit_target"] = 0
+        updated["credit_target"] = target
     elif not state["preserve_goal"] and isinstance(goal, dict):
         target = exact_amount(goal.get("target"))
         if target is not None and target > 0:

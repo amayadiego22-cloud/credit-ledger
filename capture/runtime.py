@@ -28,8 +28,28 @@ from .completion import (sync_goal_completion, goal_completion_payload,
                          acknowledge_goal_completion)
 from .compatibility import resolve_realm, client_version
 
-VERSION = "0.22.11"
+VERSION = "0.22.14"
 PREFIX = "[CreditLedger]"
+
+_MATCHMAKING_TYPES = frozenset((
+    ("gui.Scaleform.daapi.view.lobby.battle_queue.states", "CommonBattleQueueState"),
+    ("gui.Scaleform.daapi.view.lobby.battle_queue.states", "StrongholdsBattleQueueState"),
+    ("halloween.gui.impl.lobby.states", "HalloweenPreBattleQueueState"),
+    ("last_stand.gui.impl.lobby.states", "LastStandPreBattleQueueState"),
+    ("gui.impl.lobby.maps_training.states", "MapsTrainingQueueState"),
+    ("battle_royale.gui.impl.lobby.views.states", "BattleRoyaleTournamentQueueState"),
+))
+
+
+def _is_matchmaking_state(state):
+    """Recognize loaded native queue classes without initializing event modes."""
+    for cls in type(state).__mro__:
+        module_name, name = cls.__module__, cls.__name__
+        if (module_name, name) in _MATCHMAKING_TYPES:
+            module = sys.modules.get(module_name)
+            if module is not None and getattr(module, name, None) is cls:
+                return True
+    return False
 
 
 def _now_utc():
@@ -388,8 +408,8 @@ class Collector(object):
     def _garage_view_visible(self):
         """The lobby also contains research, profile, store and other pages.
 
-        Use its native visible route and HANGAR flag, including mode-specific
-        and legacy garages. Unknown/loading routes must not expose the panel.
+        Use the native HANGAR flag for garages and native battle queue classes
+        for matchmaking. Other pages and unknown/loading routes stay hidden.
         """
         try:
             from gui.Scaleform.lobby_entry import getLobbyStateMachine
@@ -405,7 +425,11 @@ class Collector(object):
             if machine is None:
                 return False
             state = machine.visibleState
-            return state is not None and bool(isHangarState(state))
+            if state is None:
+                return False
+            if isHangarState(state):
+                return True
+            return _is_matchmaking_state(state)
         except Exception:
             return False
 
@@ -1240,7 +1264,7 @@ class Collector(object):
             self.config = updated
         if not skip_daily_reset and server_reset_due(self.config, self.realm, account_id, now, server_clock):
             self._reset_history(account_id, balance, now, automatic=True, server_clock=server_clock)
-            print(PREFIX + " server game-day history restarted; credit goal cleared")
+            print(PREFIX + " server game-day history restarted; default credit goal started")
         try:
             updated = sync_goal_completion(self.config, self.realm, account_id, balance)
             if updated is not None:
