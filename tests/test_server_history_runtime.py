@@ -36,7 +36,7 @@ class ServerHistoryRuntimeTests(unittest.TestCase):
         self.balance += 76500
         return self.collector.panel_payload()
 
-    def test_server_rollover_zeros_all_groups_goal_and_wallet_period_only_once(self):
+    def test_server_rollover_zeros_results_and_starts_default_goal_only_once(self):
         with self.native("2026-10-18T12:00:00Z"):
             before = self.start()
             self.assertEqual(before["history_control"]["mode"], "server")
@@ -53,9 +53,11 @@ class ServerHistoryRuntimeTests(unittest.TestCase):
             self.assertEqual(fresh["rewards"], [])
             self.assertEqual(fresh["wallet"]["baseline"], self.balance)
             self.assertEqual(fresh["wallet"]["change"], 0)
-            self.assertEqual(fresh["goal"]["target"], 0)
-            self.assertFalse(fresh["goal"]["active"])
-            self.assertIsNone(fresh["goal"]["baseline"])
+            self.assertEqual(fresh["goal"]["target"], 100000)
+            self.assertTrue(fresh["goal"]["active"])
+            self.assertEqual(fresh["goal"]["baseline"], self.balance)
+            self.assertEqual(fresh["goal"]["current"], 0)
+            self.assertEqual(fresh["goal"]["progress_percent"], 0)
             self.assertEqual(fresh["goal"]["reset_generation"], 1)
             self.assertEqual(self.collector.ledger.to_dict(), ledger)
             self.assertEqual(len(self.collector.wallet.receipts("NA", "101")), 1)
@@ -87,7 +89,9 @@ class ServerHistoryRuntimeTests(unittest.TestCase):
             fresh = self.collector.panel_payload()
             self.assertEqual(fresh["history_control"]["generation"], 1)
             self.assertEqual(fresh["wallet"]["baseline"], BASE + 200000)
-            self.assertEqual(fresh["goal"]["target"], 0)
+            self.assertEqual(fresh["goal"]["target"], 100000)
+            self.assertTrue(fresh["goal"]["active"])
+            self.assertEqual(fresh["goal"]["baseline"], self.balance)
 
     def test_removed_manual_schedule_cannot_disable_server_reset(self):
         with self.native("2026-10-18T12:00:00Z"):
@@ -98,7 +102,8 @@ class ServerHistoryRuntimeTests(unittest.TestCase):
             self.assertEqual(self.collector.panel_payload()["history_control"]["mode"], "server")
             self.collector.reset_history({"confirm": True})
             fresh = self.collector.panel_payload()
-            self.assertEqual(fresh["goal"]["target"], 0)
+            self.assertEqual(fresh["goal"]["target"], 100000)
+            self.assertTrue(fresh["goal"]["active"])
             self.assertEqual(fresh["summary"]["battle_count"], 0)
 
     def test_failed_period_commit_preserves_goal_and_retries_same_server_cycle(self):

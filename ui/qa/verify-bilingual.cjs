@@ -125,6 +125,7 @@ module.exports=async function qaBilingual(env){
     assert((await surface.locator('#lc-wallet-period').textContent()).includes('local time'));
     assert((await surface.locator('#lc-archive-toggle').textContent()).includes('Daily battle history'));
     const englishStatic=await surface.locator('#lc-details').textContent();
+    assert(englishStatic.includes('editable 100,000-credit goal'),'The history reset description must explain the new editable default in English');
     for(const text of ['Gross earnings','Repairs','Ammunition','Consumables','Personal reserve','Clan reserve','Reset battle history'])assert(englishStatic.includes(text),'English UI is missing '+text);
     for(const text of ['Ganancia o pérdida','Tu meta','Ingresos brutos','Reparaciones','Conciliación','Reiniciar historial','Todas las partidas','Modo de juego:'])assert(!englishStatic.includes(text),'English interface retains a Spanish UI phrase: '+text);
     for(const attribute of ['title','aria-label']){

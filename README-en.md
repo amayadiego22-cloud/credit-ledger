@@ -2,9 +2,9 @@
   <img src="docs/cover-0.22.11-302x170.png" alt="Credit Ledger — Credit goals and battle accounting" width="302" height="170">
 </p>
 
-# Credit Ledger — 0.22.11
+# Credit Ledger — 0.22.14
 
-[Español](README.md) · [Download with installer](https://github.com/amayadiego22-cloud/credit-ledger/releases/tag/v0.22.11) · [WGMods](https://wgmods.net/8056/)
+[Español](README.md) · [Download with installer](https://github.com/amayadiego22-cloud/credit-ledger/releases/tag/v0.22.14) · [WGMods](https://wgmods.net/8056/)
 
 ## Interface preview
 
@@ -35,9 +35,17 @@ Choose the expanded panel or the compact progress circle. The Move handle appear
 
 *These are the same 0.22.11 interface previews published on WGMods. Amounts shown are demonstration data.*
 
+Installer **0.22.14.3** adds staged progress and a **Finish** button that closes the program after successful completion. It retires older and disabled Credit Ledger packages in the current and older client folders, keeps unrelated files and future client folders, and restores backed-up packages if an operation fails. Validation passed **450 Python tests, 44 installer engine tests and 13 form-flow checks**. These checks do not claim new connected testing in every mode or region.
+
+Version **0.22.14** extends matchmaking visibility to native event queues (Halloween and Last Stand), Topography and Steel Hunter tournaments, alongside the common queue used by Random Battles and Onslaught and the Strongholds queue. It recognizes native queue classes and subclasses without initializing inactive event modes. Canceling a search preserves the widget position, state and goal. The widget hides when entering battle and on other garage pages. Visual confirmation in each available game mode is still pending.
+
+Version **0.22.13** starts an editable **100,000 additional-credit goal** from the synced account balance for new accounts and each new history/server-day period. Existing positive goals and progress are preserved. Empty zero goals left by earlier resets are initialized; explicitly entering 0 still disables the goal for the current period. The widget remains visible while matchmaking. This fix still needs visual confirmation in the game.
+
+Version **0.22.12** keeps the widget visible while matchmaking, including native battle and Strongholds queues. Canceling the search preserves the widget state, position, goal and history. It hides when entering battle and remains hidden in the tech tree, Service Record and other pages. This fix still needs visual confirmation in the game.
+
 The entire circle highlights on hover, including its outer edge. Click anywhere on the disk to expand, or drag the Move handle to reposition it. Highlighting does not change the actual goal percentage.
 
-Version 0.22.11 applies the approved goal circle: a thicker green ring, percentage, target amount and “Goal” label inside a 112 × 112 px disk. The transparent window includes a “Move” handle that appears on hover or keyboard navigation and remains visible while dragging. Click the center to expand. New accounts start with a **100,000 additional-credit goal** based on their synced balance. Existing saved goals, including disabled goals, remain unchanged. History resets still disable the goal. Progress bars are thicker and green. The player confirmed the circle and full hover highlight in the game on 0.22.11. This release has no beta label and includes the installer inside the ZIP.
+Version 0.22.11 applies the approved goal circle: a thicker green ring, percentage, target amount and “Goal” label inside a 112 × 112 px disk. The transparent window includes a “Move” handle that appears on hover or keyboard navigation and remains visible while dragging. Click the center to expand. New accounts start with a **100,000 additional-credit goal** based on their synced balance. Existing saved goals, including disabled goals, remain unchanged. Starting with 0.22.13, history resets start an editable 100,000-credit goal. Progress bars are thicker and green. The player confirmed the circle and full hover highlight in the game on 0.22.11. This release has no beta label and includes the installer inside the ZIP.
 
 Release 0.22.8 gives the mod and installer a shared 8pt layout: 8/16/24/32px spacing, aligned cards, clearer controls and a less crowded widget. Goals, history and financial calculations are preserved. Validation passed 432 Python tests, 117 rendered UI checks and 32 installer tests. The player subsequently confirmed the 0.22.11 circle in the game; the live confirmations below refer to earlier releases.
 
@@ -47,7 +55,7 @@ This release limits the widget and details to the actual garage view. They hide 
 
 The minimized state and saved positions are retained. Accounting continues while other pages are open; navigating never resets your goal or history.
 
-The ZIP installs identical mod files at `mods/2.4.1.0/local.credit_ledger.wotmod` and `mods/2.4.1.1/local.credit_ledger.wotmod`. The game loads only its active version's folder. Accounting, optional goals, filters and saved local data retain the same behavior.
+The ZIP includes compatible packages for both supported client versions. The installer selects only the active version's folder and removes Credit Ledger from older client folders, deleting those folders only when empty. Accounting, optional goals, filters and saved local data retain the same behavior.
 
 Credit Ledger tracks your battle income, expenses and profit or loss after costs. A movable garage widget shows your credit goal; **View details** opens the full breakdown. The mod reads native battle results and your synchronized account balance. It does not change your actual credits.
 
@@ -84,9 +92,9 @@ Personal and clan reserve bonuses appear as separate breakdown rows. They are **
 
 ## Daily battle history
 
-At each new **server game day**, current battle statistics restart at zero and the goal is turned off. The new tracking period uses your current synchronized balance. This is built in and does not require choosing a local reset time. Reconnecting during the same server day does not reset the period again.
+At each new **server game day**, current battle statistics restart at zero and a new editable 100,000-credit goal starts at 0%. The new tracking period uses your current synchronized balance. This is built in and does not require choosing a local reset time. Reconnecting during the same server day does not reset the period again.
 
-The manual history reset button remains available with confirmation. It resets the current period and deactivates the goal while preserving your real account balance and captured evidence.
+The manual history reset button remains available with confirmation. It resets the current period and starts a new editable 100,000-credit goal from the current balance while preserving your real account balance and captured evidence.
 
 **Daily battle history** is collapsed at the bottom of the details panel. Open it to select an earlier recorded day, then filter by game mode or tank. Browsing earlier days does not change today's goal or statistics. Additional identified rewards are shown separately for the whole day because they cannot safely be assigned to a specific tank or mode.
 
@@ -98,14 +106,16 @@ Identified mission rewards and other credits are tracked using native receipts. 
 
 ## Installation and updates
 
-Close the game completely and extract the public ZIP into its main folder, merging the `mods` folder. The installed package is:
+Close the game, extract the ZIP to a separate folder and open `CreditLedger-Setup-0.22.14.exe`. The installer detects the active client version, installs one copy and removes Credit Ledger from older client folders. It deletes those folders only when empty, keeping other files and your data.
+
+For manual installation, copy only the package matching your active game version to its corresponding path:
 
 ```text
 <GAME_FOLDER>\mods\2.4.1.1\local.credit_ledger.wotmod
 <GAME_FOLDER>\mods\2.4.1.0\local.credit_ledger.wotmod
 ```
 
-The same download targets NA, EU and ASIA with clients 2.4.1.0 and 2.4.1.1. The game loads only the file in its active version's folder. Account data stays under `mods\configs\credit_ledger`; captures are separated under `captures\<REALM>\<account>`. The server-day reset uses the connected client's native daily boundary. Update by replacing this mod's files while the game is closed, keeping one copy in each client-version folder. Account data and other mods are preserved.
+The same download targets NA, EU and ASIA with clients 2.4.1.0 and 2.4.1.1. Both compatible packages are included; the installer uses only the active version. Automatic cleanup of older client folders is performed by the `.exe`. Account data stays under `mods\configs\credit_ledger`; captures are separated under `captures\<REALM>\<account>`. The server-day reset uses the connected client's native daily boundary. Keep one copy in the active client-version folder. Account data and other mods are preserved.
 
 Download updates from the official portal listing. The public player ZIP contains no account data, external updater, service or scheduled task. To uninstall, remove only the `.wotmod` while the game is closed; local data is retained. Local development uses a separate windowless update helper, which is not part of the public package.
 

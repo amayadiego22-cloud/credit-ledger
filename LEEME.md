@@ -1,8 +1,14 @@
-# Contabilidad de créditos — 0.22.11
+# Contabilidad de créditos — 0.22.14
+
+La versión **0.22.14** amplía la visibilidad durante la búsqueda a las colas nativas de los otros modos: eventos Halloween/Torre Oscura y Last Stand, Topografía y torneos de Cazador de Acero, además de la cola común usada por Aleatorias y Asedio y la de Fortalezas. Reconoce sus clases y variantes sin cargar modos inactivos. Conserva la posición, el estado del widget y la meta al cancelar. Se oculta al entrar a batalla y en las demás páginas del garaje. La comprobación visual en cada modo disponible está pendiente.
+
+La versión **0.22.13** inicia una meta editable de **100.000 créditos adicionales** desde el saldo sincronizado, tanto en una cuenta nueva como al reiniciar el historial o comenzar otra jornada del servidor. Las metas positivas guardadas y su avance se conservan. Corrige los ceros vacíos que dejaron reinicios anteriores; escribir 0 expresamente sigue desactivando la meta durante esa jornada. La búsqueda de partida conserva la visibilidad del widget. La comprobación visual de esta corrección en el juego está pendiente.
+
+La versión **0.22.12** mantiene el widget visible durante la búsqueda de partida, incluidas las colas nativas de batalla y de Fortalezas. Cancelar la búsqueda conserva el estado, la posición, la meta y el historial. Se oculta al entrar en batalla y sigue oculto en el árbol tecnológico, la hoja de servicio y las demás pantallas. La comprobación visual de esta corrección dentro del juego está pendiente.
 
 Toda la superficie del círculo se resalta al pasar el ratón, incluido su contorno. Pulsa cualquier parte del círculo para abrir el resumen y usa «Mover» para arrastrarlo. El resaltado no cambia el porcentaje real de tu meta.
 
-La versión 0.22.11 incorpora el círculo aprobado: aro verde más grueso, porcentaje y cantidad de la meta en el centro, con la etiqueta «Meta». El círculo mide 112 × 112 px; su ventana transparente incluye espacio para el botón «Mover», que aparece al pasar el ratón o navegar con teclado y se mantiene visible al arrastrar. Pulsa el centro para abrir el resumen. La primera meta de una cuenta nueva es de **100.000 créditos adicionales**, desde su saldo sincronizado. Las metas ya guardadas, incluido el valor 0, se conservan. Los reinicios de historial siguen desactivando la meta. Las barras de progreso también son más gruesas y verdes. El usuario confirmó en el juego el círculo y su resaltado completo en 0.22.11. Esta versión se distribuye sin etiqueta beta e incluye el instalador dentro del ZIP.
+La versión 0.22.11 incorpora el círculo aprobado: aro verde más grueso, porcentaje y cantidad de la meta en el centro, con la etiqueta «Meta». El círculo mide 112 × 112 px; su ventana transparente incluye espacio para el botón «Mover», que aparece al pasar el ratón o navegar con teclado y se mantiene visible al arrastrar. Pulsa el centro para abrir el resumen. La primera meta de una cuenta nueva es de **100.000 créditos adicionales**, desde su saldo sincronizado. Las metas ya guardadas, incluido el valor 0, se conservan. A partir de 0.22.13 los reinicios de historial comienzan una meta editable de 100.000 créditos. Las barras de progreso también son más gruesas y verdes. El usuario confirmó en el juego el círculo y su resaltado completo en 0.22.11. Esta versión se distribuye sin etiqueta beta e incluye el instalador dentro del ZIP.
 
 La versión 0.22.8 unifica el mod y el instalador con una cuadrícula de 8 píxeles: espacios de 8, 16, 24 y 32 px, tarjetas alineadas, controles más cómodos y un widget más despejado. Conserva las metas, el historial y los cálculos. Pasaron 432 pruebas de Python, 117 comprobaciones de la interfaz y 32 del instalador. La comprobación posterior del círculo de 0.22.11 está confirmada por el usuario; las confirmaciones conectadas que se describen a continuación corresponden a versiones anteriores.
 
@@ -52,7 +58,7 @@ Al alcanzar una meta nueva, el texto **«¡Meta alcanzada! ¡Buen trabajo!»** s
 
 ## Reinicios y días anteriores
 
-Cada nuevo **día de juego del servidor** inicia un periodo con partidas, ganancias, pérdidas y estadísticas por tanque en 0. La conciliación toma el saldo actual sincronizado. La meta queda **desactivada con cantidad 0**, sin su base ni fecha anteriores, para que introduzcas una nueva. Se descarta el borrador anterior de la meta al aplicar ese reinicio completo.
+Cada nuevo **día de juego del servidor** inicia un periodo con partidas, ganancias, pérdidas y estadísticas por tanque en 0. La conciliación toma el saldo actual sincronizado. La meta empieza en **100.000 créditos adicionales**, al 0 %, desde el saldo y la fecha de ese nuevo período. Puedes modificar la cantidad o escribir 0 para desactivarla durante la jornada. Se descarta el borrador anterior de la meta al aplicar ese reinicio completo.
 
 El calendario se obtiene del ajuste regional nativo `starting_time_of_a_new_game_day` y de `helpers.time_utils.getServerUTCTime()` después de sincronizar el garaje de esta cuenta. No se sustituye por las 06:00 de Windows. Una reconexión o un mantenimiento dentro de la misma jornada no provoca otro reinicio. Si estuviste varios días sin entrar, se aplica una vez al primer saldo sincronizado al regresar. Si falta el reloj nativo o el saldo, espera sin inventarlos.
 
@@ -72,14 +78,16 @@ El resultado **−113.508 créditos** de una partida fue comparado y confirmado 
 
 ## Instalación y actualización
 
-Cierra el juego por completo y extrae el ZIP público en su carpeta principal, combinando la carpeta `mods`. El archivo debe quedar en:
+Cierra el juego, extrae el ZIP en una carpeta aparte y abre `CreditLedger-Setup-0.22.14.exe`. El instalador detecta la versión activa, instala una sola copia y retira Credit Ledger de las carpetas de clientes anteriores; elimina esas carpetas solo si quedan vacías. Conserva los demás archivos y tus datos.
+
+Para instalar manualmente, copia únicamente el paquete de la versión que usa tu juego a la ruta correspondiente:
 
 ```text
 <CARPETA_DEL_JUEGO>\mods\2.4.1.1\local.credit_ledger.wotmod
 <CARPETA_DEL_JUEGO>\mods\2.4.1.0\local.credit_ledger.wotmod
 ```
 
-La misma descarga sirve para NA, EU y ASIA con los clientes 2.4.1.0 y 2.4.1.1. El ZIP instala dos copias idénticas en carpetas de versión distintas y el juego carga solo la activa. Los datos locales se guardan bajo `mods\configs\credit_ledger`; las capturas se separan en `captures\<REGION>\<cuenta>`. Al actualizar, sustituye solo los archivos de este mod con el juego cerrado. Conserva un único paquete del mod dentro de cada carpeta de versión. Los datos y otros mods se conservan.
+La misma descarga sirve para NA, EU y ASIA con los clientes 2.4.1.0 y 2.4.1.1. El ZIP ofrece ambos paquetes compatibles; el instalador utiliza solo la versión activa. La limpieza automática de versiones anteriores la realiza el `.exe`. Los datos locales se guardan bajo `mods\configs\credit_ledger`; las capturas se separan en `captures\<REGION>\<cuenta>`. Conserva un único paquete del mod dentro de la carpeta de versión activa. Los datos y otros mods se conservan.
 
 El paquete público se actualiza descargando nuevas versiones de su ficha del portal oficial. No incluye cuentas, historiales ajenos, servicios, tareas programadas ni actualizador externo. Para desinstalarlo, elimina solo el archivo `.wotmod` con el juego cerrado; los datos locales se conservan. El paquete usa referencias a recursos locales del cliente y no incluye arte extraído del juego.
 

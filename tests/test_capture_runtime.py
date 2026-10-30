@@ -33,6 +33,44 @@ class Event(object):
             callback(*args)
 
 
+class CommonBattleQueueState(object):
+    hangar = False
+
+
+class StrongholdsBattleQueueState(object):
+    hangar = False
+
+
+class HalloweenPreBattleQueueState(object):
+    hangar = False
+
+
+class LastStandPreBattleQueueState(object):
+    hangar = False
+
+
+class MapsTrainingQueueState(object):
+    hangar = False
+
+
+class BattleRoyaleTournamentQueueState(object):
+    hangar = False
+
+
+CommonQueueState = CommonBattleQueueState
+StrongholdsQueueState = StrongholdsBattleQueueState
+QUEUE_STATE_TYPES = (
+    ("gui.Scaleform.daapi.view.lobby.battle_queue.states", CommonQueueState),
+    ("gui.Scaleform.daapi.view.lobby.battle_queue.states", StrongholdsQueueState),
+    ("halloween.gui.impl.lobby.states", HalloweenPreBattleQueueState),
+    ("last_stand.gui.impl.lobby.states", LastStandPreBattleQueueState),
+    ("gui.impl.lobby.maps_training.states", MapsTrainingQueueState),
+    ("battle_royale.gui.impl.lobby.views.states", BattleRoyaleTournamentQueueState),
+)
+for queue_module_name, queue_class in QUEUE_STATE_TYPES:
+    queue_class.__module__ = queue_module_name
+
+
 class RuntimeTests(unittest.TestCase):
     def setUp(self):
         self.directory = tempfile.mkdtemp(prefix="credit-ledger-runtime-")
@@ -74,12 +112,18 @@ class RuntimeTests(unittest.TestCase):
         lobby_entry.getLobbyStateMachine = lambda: self.lobby_machine
         lobby_states = types.ModuleType("gui.lobby_state_machine.states")
         lobby_states.isHangarState = lambda state: getattr(state, "hangar", False) is True
-        self.modules = patch.dict(sys.modules, {"BigWorld": self.world,
+        queue_modules = {}
+        for module_name, queue_class in QUEUE_STATE_TYPES:
+            module = queue_modules.setdefault(module_name, types.ModuleType(module_name))
+            setattr(module, queue_class.__name__, queue_class)
+        mocked_modules = {"BigWorld": self.world,
                           "BattleReplay": self.replay, "constants": constants,
                           "chat_shared": chat_shared, "messenger.proto.events": messenger,
                           "PlayerEvents": player_events, "capture.ledger": core.ledger,
                           "gui.Scaleform.lobby_entry": lobby_entry,
-                          "gui.lobby_state_machine.states": lobby_states})
+                          "gui.lobby_state_machine.states": lobby_states}
+        mocked_modules.update(queue_modules)
+        self.modules = patch.dict(sys.modules, mocked_modules)
         self.modules.start()
         self.root_patch = patch.object(runtime, "_game_directory", return_value=self.directory)
         self.root_patch.start()

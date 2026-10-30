@@ -1,19 +1,22 @@
-CREDIT LEDGER / CONTABILIDAD DE CRÉDITOS — INSTALADOR 0.22.11
+CREDIT LEDGER / CONTABILIDAD DE CRÉDITOS — INSTALADOR 0.22.14
 
 Windows 10 / 11. World of Tanks PC de Wargaming, NA / EU / ASIA.
 Compatible con los clientes 2.4.1.0 y 2.4.1.1.
 
 INSTALAR
 1. Cierra World of Tanks por completo.
-2. Abre CreditLedger-Setup-0.22.11.exe.
+2. Abre CreditLedger-Setup-0.22.14.exe.
 3. Elige tu instalación en la lista y revisa la carpeta que aparece debajo.
    Si no aparece, pulsa «Elegir carpeta…» y selecciona la carpeta principal
    de WoT, donde está version.xml. En Game Center puedes encontrarla en
    Ajustes del juego → Mostrar en carpeta.
-4. Pulsa «Instalar / Actualizar». Cuando aparezca «¡Instalado!», abre el juego.
-   El widget aparece en el garaje.
+4. Pulsa «Instalar / Actualizar». La barra muestra el porcentaje y las etapas
+   de la instalación. Espera hasta el 100 % y «¡Instalación completada!».
+5. Pulsa «Finalizar» para cerrar el instalador. Ya puedes abrir el juego;
+   el widget aparece en el garaje.
 
-Si tienes varias instalaciones, repite los pasos para cada una que desees.
+Si tienes varias instalaciones, vuelve a abrir el instalador y repite los
+pasos para cada una que desees.
 El selector Español / English cambia el idioma del instalador al instante.
 El idioma del mod se elige por separado dentro del juego.
 
@@ -21,14 +24,21 @@ ACTUALIZAR O QUITAR
 El mismo instalador sirve para actualizar a esta versión. Para quitar el mod,
 elige la instalación y pulsa «Quitar el mod…»; confirma la operación.
 Ambas operaciones conservan tus metas, preferencias e historial.
-Solo se cambia la carpeta de mods de la versión activa del juego.
+«Quitar el mod…» elimina Credit Ledger solo de la versión activa del juego.
 
 El instalador identifica las copias de Credit Ledger mediante su meta.xml;
 respalda las anteriores y evita dejar duplicados en la carpeta activa.
-Los otros mods y las carpetas de otras versiones del juego se conservan.
+También retira las copias antiguas deshabilitadas (.wotmod.disabled) que
+identifica como Credit Ledger. Al terminar comprueba que solo quede una
+copia actualizada del mod en mods\<versión actual del juego>.
+Al instalar o actualizar, también retira Credit Ledger de las carpetas
+mods\<versión anterior del juego> de esa misma instalación. Compara los
+números de versión para limpiar solo versiones anteriores, nunca futuras.
+Elimina las carpetas de versiones anteriores y sus subcarpetas únicamente
+si están vacías. Si contienen otros mods o archivos, las conserva.
+La carpeta de la versión actual y tus datos locales se conservan.
 Los respaldos y el mapa de rutas originales quedan en:
 %LOCALAPPDATA%\CreditLedger\Installer\backups\
-Si ya está instalado exactamente el mismo archivo, no vuelve a copiarlo.
 No reemplaza una versión más nueva por esta versión anterior.
 
 REQUISITOS Y LÍMITES
@@ -48,11 +58,18 @@ Esta edición del instalador no implica que el ejecutable haya sido revisado
 o aprobado por Wargaming; su distribución se revisa por separado.
 
 NOVEDADES
+Instalador clásico con barra de progreso, porcentaje y etapas. Al terminar,
+el botón «Finalizar» cierra el programa. Si ocurre un error, puedes reintentar.
+La actualización limpia las copias del mod en versiones anteriores del
+cliente y elimina sus carpetas vacías, conservando otros mods y archivos.
 Círculo verde con porcentaje y cantidad de la meta. «Mover» aparece al pasar el ratón.
 La primera meta de una cuenta nueva es 100.000 créditos. Tus metas guardadas se conservan.
 
 Todo el círculo se resalta al pasar el ratón y se puede pulsar para abrir el resumen.
 Usa el botón «Mover» para cambiarlo de posición.
 
-Edición estable 0.22.11, sin etiqueta beta.
-Descomprime el ZIP y abre CreditLedger-Setup-0.22.11.exe.
+Edición estable 0.22.14, sin etiqueta beta.
+Descomprime el ZIP y abre CreditLedger-Setup-0.22.14.exe.
+
+NUEVA META INICIAL
+Cada cuenta y nuevo período de historial comienzan con una meta editable de 100.000 créditos desde el saldo actual. Escribir 0 la desactiva durante esa jornada.

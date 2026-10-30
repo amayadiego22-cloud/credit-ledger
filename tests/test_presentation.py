@@ -294,6 +294,7 @@ class PresentationTests(unittest.TestCase):
         expected = copy.deepcopy(previous)
         expected["credit_target"] = 0
         expected["account_goals"]["NA:101"]["target"] = 0
+        expected["account_goals"]["NA:101"]["disabled_by_user"] = True
         self.assertEqual(disabled, expected)
         self.assertEqual(self.config, previous)
         payload = build_payload(self.ledger, "NA", "101", disabled, 22000000,
